@@ -11,12 +11,10 @@ Controller\BrandProductsServlet.class
 DB\DBContext.class
 Controller\EditProfileServlet.class
 Controller\FilterByBrandServlet.class
-Controller\ViewAllProductsServlet.class
 model\Product.class
 DAO\RatingDAO.class
 Controller\ProductListServlet.class
 DAO\UserDAO.class
-.netbeans_automatic_build
 Controller\HomeServlet.class
 model\Comment.class
 model\User.class
