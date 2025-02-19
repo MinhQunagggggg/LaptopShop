@@ -244,6 +244,50 @@ public List<Product> searchByName(String txtSearch) {
     return products;
 }
 
+public List<String> getSubBrandsByBrand(String brandName) {
+    List<String> subBrands = new ArrayList<>();
+    String query = "SELECT sb.name FROM SubBrands sb " +
+                   "JOIN Brands b ON sb.brand_id = b.brand_id " +
+                   "WHERE b.name = ?";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, brandName);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            subBrands.add(rs.getString("name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return subBrands;
+}
+public List<Product> getProductsBySubBrand(String subBrandName) {
+    List<Product> list = new ArrayList<>();
+    String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
+                   "FROM Products p " +
+                   "LEFT JOIN ProductVariants v ON p.product_id = v.product_id " +
+                   "LEFT JOIN SubBrands sb ON p.subbrand_id = sb.subbrand_id " +
+                   "WHERE sb.name = ?";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, subBrandName);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(new Product(
+                rs.getInt("product_id"),
+                rs.getString("name"),
+                rs.getString("image_url"),
+                rs.getDouble("price")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 
 
     // Phân trang sản phẩm theo thương hiệu
