@@ -117,30 +117,39 @@ public List<String> getBrandsByCatalog(String catalogName) {
     }
     return false; // Danh mục không có brand
 }
-public List<Product> searchProducts(String keyword) {
-        List<Product> products = new ArrayList<>();
-        String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
-                       "FROM Products p " +
-                       "JOIN ProductVariants v ON p.product_id = v.product_id " +
-                       "WHERE p.name LIKE ?";
+public List<Product> searchByName(String txtSearch) {
+    List<Product> list = new ArrayList<>();
+    String query = "SELECT TOP 10 " +
+                   "    p.product_id, p.name AS product_name, p.image_url, " +
+                   "    p.description, COALESCE(b.name, 'N/A') AS brand_name, " +
+                   "    v.price, v.stock " +
+                   "FROM Products p " +
+                   "LEFT JOIN Brands b ON p.brand_id = b.brand_id " +
+                   "LEFT JOIN ProductVariants v ON p.product_id = v.product_id " +
+                   "WHERE p.name LIKE ? " + 
+                   "   OR SOUNDEX(p.name) = SOUNDEX(?) " + // Tìm theo phát âm tương tự
+                   "ORDER BY p.name ASC;";
 
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, "%" + keyword + "%"); // Tìm kiếm gần đúng
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                products.add(new Product(
-                    rs.getInt("product_id"),
-                    rs.getString("name"),
-                    rs.getString("image_url"),
-                    rs.getDouble("price")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, "%" + txtSearch + "%");
+        ps.setString(2, txtSearch);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(new Product(
+                rs.getInt("product_id"),
+                rs.getString("product_name"),
+                rs.getString("image_url"),
+                rs.getDouble("price"),
+                rs.getString("brand_name"),
+                rs.getString("description")
+            ));
         }
-        return products;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return list;
+}
 
 
 
