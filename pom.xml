@@ -15,12 +15,7 @@
     </properties>
     
    <dependencies>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
+       
         <dependency> 
             <groupId>com.microsoft.sqlserver</groupId> 
             <artifactId>mssql-jdbc</artifactId> 
@@ -100,7 +95,7 @@
                             <silent>true</silent>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>javax</groupId>
+                                
                                     <artifactId>javaee-endorsed-api</artifactId>
                                     <version>7.0</version>
                                     <type>jar</type>

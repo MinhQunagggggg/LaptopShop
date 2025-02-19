@@ -79,30 +79,30 @@
         <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
     </a>
 
-    <c:choose>
-        <c:when test="${not empty sessionScope.user}">
-            <!-- Dropdown User -->
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown">
-                    <img src="${pageContext.request.contextPath}/assets/img/user.jpg" alt="User" width="30" height="30" class="rounded-circle me-2">
-                    ${sessionScope.user.name}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Profile"><i class="bi bi-person"></i> View Profile</a></li>
-                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/EditProfile"><i class="bi bi-pencil-square"></i> Edit Profile</a></li>
-                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/ChangePassword"><i class="bi bi-key"></i> Change Password</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/Logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-                </ul>
-            </div>
-        </c:when>
-        <c:otherwise>
-            <!-- Nút Login -->
-            <a href="${pageContext.request.contextPath}/Login" class="btn btn-outline-primary">
-                <i class="bi bi-box-arrow-in-right"></i> Login
-            </a>
-        </c:otherwise>
-    </c:choose>
+        <c:choose>
+            <c:when test="${not empty sessionScope.user}">
+                <!-- Dropdown User -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown">
+                        <img src="${pageContext.request.contextPath}/assets/img/user.jpg" alt="User" width="30" height="30" class="rounded-circle me-2">
+                        ${sessionScope.user.name}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Profile"><i class="bi bi-person"></i> View Profile</a></li>
+                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/EditProfile"><i class="bi bi-pencil-square"></i> Edit Profile</a></li>
+                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/ChangePassword"><i class="bi bi-key"></i> Change Password</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/Logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <!-- Nút Login -->
+                <a href="${pageContext.request.contextPath}/Login" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+            </c:otherwise>
+        </c:choose>
 </div>
 <style>
     html, body {
