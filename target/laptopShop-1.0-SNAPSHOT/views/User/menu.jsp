@@ -64,13 +64,15 @@
             <div class="d-flex align-items-center">
                 
 <!-- Search Form -->
-<form class="d-flex me-3" onsubmit="return false;">
-    <input class="form-control me-2" type="search" id="searchQuery" 
-           placeholder="Search products..." aria-label="Search" autocomplete="off">
-    <button class="btn btn-outline-success" type="button" onclick="searchProducts()" title="Search">
-        <i class="fa fa-search" aria-hidden="true"></i>
+<form class="d-flex me-3" action="search" method="GET">
+    <input class="form-control me-2" type="search" name="query" 
+           placeholder="Search products..." aria-label="Search" required>
+    <button class="btn btn-outline-success" type="submit">
+        <i class="fa fa-search"></i>
     </button>
 </form>
+
+
 
 
     <!-- Giỏ hàng -->

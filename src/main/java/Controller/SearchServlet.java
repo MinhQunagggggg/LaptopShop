@@ -20,40 +20,28 @@ import model.Product;
  *
  * @author CE182250
  */
+
 @WebServlet(name = "SearchServlet", urlPatterns = {"/search"})
 public class SearchServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        // Lấy từ khóa tìm kiếm từ request
         String txtSearch = request.getParameter("query");
-        System.out.println("📩 Received search request: " + txtSearch); // ✅ Kiểm tra log
 
+        // Kiểm tra nếu rỗng thì quay lại trang Home
         if (txtSearch == null || txtSearch.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendRedirect("home.jsp");
             return;
         }
 
+        // Truy vấn danh sách sản phẩm khớp với từ khóa
         ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.searchProducts(txtSearch);
+        List<Product> products = productDAO.searchByName(txtSearch);
 
-        System.out.println("🔎 Found " + products.size() + " results"); // ✅ Kiểm tra số lượng sản phẩm tìm thấy
-
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
-        if (products.isEmpty()) {
-            out.println("<p class='text-center text-muted'>No products found.</p>");
-        } else {
-            for (Product product : products) {
-                out.println("<div class='col-md-3 product-item'>");
-                out.println("<a href='ProductDetail?id=" + product.getId() + "' class='text-decoration-none'>");
-                out.println("<div class='card'>");
-                out.println("<img class='card-img-top' src='assets/img/" + product.getImageUrl() + "' alt='" + product.getName() + "'>");
-                out.println("<div class='card-body text-center'>");
-                out.println("<h5>" + product.getName() + "</h5>");
-                out.println("<p class='text-success fw-bold'>" + String.format("%,.2f", product.getPrice()) + " VND</p>");
-                out.println("</div></div></a></div>");
-            }
-        }
+        // Gửi danh sách sản phẩm tìm thấy đến home.jsp
+        request.setAttribute("products", products);
+        request.setAttribute("searchQuery", txtSearch);
+        request.getRequestDispatcher("views/User/Home.jsp").forward(request, response);
     }
 }
 

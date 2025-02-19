@@ -89,7 +89,10 @@
 .a1 {
     color: blue;
     }
-
+.mt-3{
+            padding-bottom: 50px;
+            padding-top: -20px;
+        }
 
     </style>
 </head>
@@ -97,7 +100,7 @@
     <jsp:include page="menu.jsp"/>
  
     <div class="container mt-5">
-        <h2 class="text-center a1">All Products off ${brandName}</h2>
+        <h2 class="text-center a1 mt-3">All Products off ${brandName}</h2>
 
         <div class="row gx-3 gy-4"> 
             <c:forEach var="product" items="${products}">

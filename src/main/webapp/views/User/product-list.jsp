@@ -82,13 +82,17 @@
         .title-style {
             color: blue;
         }
+        .mt-3{
+            padding-bottom: 50px;
+            padding-top: -20px;
+        }
     </style>
 </head>
 <body>
     <jsp:include page="menu.jsp"/>
 
     <div class="container mt-5">
-        <h2 class="text-center title-style">${catalogName != null ? catalogName : "All Products"}</h2>
+        <h2 class="text-center title-style mt-3">${catalogName != null ? catalogName : "All Products"}</h2>
 
         <c:choose>
             <c:when test="${hasBrands}">
@@ -99,7 +103,7 @@
                             <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
                                 <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
                                     <div class="card">
-                                        <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/${product.imageUrl}" alt="${product.name}">
+                                        <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
                                         <div class="card-body text-center">
                                             <h5 class="product-title">${product.name}</h5>
                                             <p class="text-success fw-bold">
@@ -119,7 +123,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
                             <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
                                 <div class="card">
-                                    <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/${product.imageUrl}" alt="${product.name}">
+                                    <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
                                     <div class="card-body text-center">
                                         <h5 class="product-title">${product.name}</h5>
                                         <p class="text-success fw-bold">

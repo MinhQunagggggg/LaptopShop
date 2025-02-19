@@ -10,6 +10,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+
 <%
     ProductDAO dao = new ProductDAO();
     List<String> brands = dao.getAllBrands();
@@ -181,125 +182,100 @@
             </button>
         </div>
     </header>
-             
-   
-   <div class="container product-section mt-5">
-    <c:forEach var="brand" items="${brands}" varStatus="status">
-        <div class="brand-section">
-            <h2 class="text-center text-primary">${brand}</h2>
-            <div id="carousel-${status.index}" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <c:forEach var="product" items="${brandProducts[status.index]}" varStatus="productStatus">
-                        <c:if test="${productStatus.index % 4 == 0}">
-                            <div class="carousel-item ${productStatus.index == 0 ? 'active' : ''}">
-                                <div class="row">
-                        </c:if>
 
-                        <div class="col-md-3 d-flex align-items-stretch">
-                            <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
-                                <div class="card">
-                                    <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
-                                    <div class="card-body text-center">
-                                        <h5>${product.name}</h5>
-                                        <p class="text-success fw-bold">
-                                            <fmt:formatNumber value="${product.price}" pattern="#,###" /> VND
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <c:if test="${productStatus.index % 4 == 3 || productStatus.last}">
+    <!-- N?u có k?t qu? tìm ki?m, hi?n th? s?n ph?m tìm th?y -->
+    <c:if test="${not empty searchQuery}">
+        <div class="container mt-5">
+            <h2 class="text-center text-primary mt-3">Search results for "${searchQuery}"</h2>
+            
+            <div class="row">
+                <c:forEach var="product" items="${products}">
+                    <div class="col-md-3">
+                        <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none">
+                            <div class="card">
+                                <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
+                                <div class="card-body text-center">
+                                    <h5>${product.name}</h5>
+                                    <p class="text-success fw-bold">
+                                        <fmt:formatNumber value="${product.price}" pattern="#,###" /> VND
+                                    </p>
                                 </div>
                             </div>
-                        </c:if>
-                    </c:forEach>
+                        </a>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <c:if test="${empty products}">
+                <p class="text-center text-muted">No products found.</p>
+            </c:if>
+        </div>
+    </c:if>
+
+    <!-- N?u có tìm ki?m, ?n danh sách s?n ph?m m?c ??nh -->
+    <div class="container product-section mt-5 ${not empty searchQuery ? 'hide-section' : ''}">
+        
+        <!-- Dropdown Categories -->
+<li class="nav-item dropdown">
+    
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="home.jsp">All Categories</a></li>
+        <li><a class="dropdown-item" href="home.jsp?category=Gaming Laptop">Gaming Laptop</a></li>
+        <li><a class="dropdown-item" href="home.jsp?category=Ultrabook">Ultrabook</a></li>
+        <li><a class="dropdown-item" href="home.jsp?category=Workstation">Workstation</a></li>
+    </ul>
+</li>
+
+
+        <c:forEach var="brand" items="${brands}" varStatus="status">
+            <div class="brand-section">
+                <h2 class="text-center text-primary">${brand}</h2>
+                <div id="carousel-${status.index}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <c:forEach var="product" items="${brandProducts[status.index]}" varStatus="productStatus">
+                            <c:if test="${productStatus.index % 4 == 0}">
+                                <div class="carousel-item ${productStatus.index == 0 ? 'active' : ''}">
+                                    <div class="row">
+                            </c:if>
+
+                            <div class="col-md-3 d-flex align-items-stretch">
+                                <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
+                                    <div class="card">
+                                        <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
+                                        <div class="card-body text-center">
+                                            <h5>${product.name}</h5>
+                                            <p class="text-success fw-bold">
+                                                <fmt:formatNumber value="${product.price}" pattern="#,###" /> VND
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <c:if test="${productStatus.index % 4 == 3 || productStatus.last}">
+                                    </div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-${status.index}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-${status.index}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
                 </div>
 
-                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-${status.index}" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carousel-${status.index}" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
+                <div class="text-center mt-3">
+                    <a href="${pageContext.request.contextPath}/BrandProducts?brand=${brand}" class="btn btn-outline-primary">
+                        View All Products of ${brand}
+                    </a>
+                </div>
             </div>
+        </c:forEach>
+    </div>
 
-            <div class="text-center mt-3">
-                <a href="${pageContext.request.contextPath}/BrandProducts?brand=${brand}" class="btn btn-outline-primary">
-                    View All Products of ${brand}
-                </a>
-            </div>
-        </div>
-    </c:forEach>
-</div>
-<!-- ??t jQuery tr??c khi g?i b?t k? file JavaScript nào -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- G?i script tìm ki?m sau khi ?ã t?i jQuery -->
-<script src="${pageContext.request.contextPath}/js/search.js"></script>
-
-<!-- Các script khác -->
-<script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-      function searchProducts() {
-    var txtSearch = document.getElementById('searchQuery').value.trim();
-    
-    console.log("? Search Input:", txtSearch); // ? Ki?m tra JavaScript có l?y ?úng giá tr? không
-
-    if (txtSearch === "") {
-        console.log("? Empty search query, reloading page...");
-        location.reload();
-        return;
-    }
-
-    $.ajax({
-        url: "search",
-        type: "get",
-        data: { query: txtSearch },
-        success: function (data) {
-            console.log("? AJAX Request Success! Updating UI...");
-            $("#productContainer").html(data);
-        },
-        error: function (xhr) {
-            console.error("? AJAX Error:", xhr);
-        }
-    });
-}
-// Ki?m tra jQuery ?ã ???c t?i ch?a
-if (typeof jQuery == 'undefined') {
-    console.error("? jQuery is not loaded! Make sure you included jQuery before this script.");
-} else {
-    console.log("? jQuery is loaded!");
-}
-
-function searchProducts() {
-    var txtSearch = document.getElementById('searchQuery').value.trim();
-    
-    console.log("? Search Input:", txtSearch); // ? Ki?m tra JavaScript có l?y ?úng giá tr? không
-
-    if (txtSearch === "") {
-        console.log("? Empty search query, reloading page...");
-        location.reload();
-        return;
-    }
-
-    $.ajax({
-        url: "search",
-        type: "get",
-        data: { query: txtSearch },
-        success: function (data) {
-            console.log("? AJAX Request Success! Updating UI...");
-            $("#productContainer").html(data);
-        },
-        error: function (xhr) {
-            console.error("? AJAX Error:", xhr);
-        }
-    });
-}
-
-
-    </script>
     <jsp:include page="footer.jsp" />
 </body>
 </html>
