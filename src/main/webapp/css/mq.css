@@ -1,0 +1,91 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Feb 20, 2025, 2:49:16 PM
+    Author     : CE182250
+*/
+
+html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Navbar */
+        .navbar {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Product Section */
+        .product-section {
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        /* ??m b?o các hàng s?n ph?m có kho?ng cách ??u */
+        .product-section .row {
+            row-gap: 40px;
+        }
+
+        /* Card s?n ph?m */
+        .card {
+            border: none;
+            transition: 0.3s;
+            margin-bottom: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ??m b?o hình ?nh có cùng chi?u cao */
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        /* ??m b?o card-body có chi?u cao ??ng nh?t */
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-body h5 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Giá s?n ph?m */
+        .card-body p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: auto;
+        }
+
+        /* Hover effect */
+        .card:hover p {
+            color: #218838;
+            transform: scale(1.05);
+        }
