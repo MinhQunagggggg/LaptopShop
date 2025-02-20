@@ -28,10 +28,14 @@ public class HomeServlet extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
 
         // 🔹 Lấy danh sách Brands
-        List<String> brands = productDAO.getAllBrands(); 
+        List<String> brands = productDAO.getAllBrands();
+        
         
         // 🔹 Lấy danh sách SubBrands của ASUS
         List<String> subBrandsOfAsus = productDAO.getSubBrandsByBrand("ASUS");
+
+        List<String> catalogs = productDAO.getAllCatalogs(); 
+        request.setAttribute("catalogs", catalogs);
 
         // 🔹 Lấy sản phẩm theo từng Brand
         List<List<Product>> brandProducts = new ArrayList<>();
@@ -46,11 +50,24 @@ public class HomeServlet extends HttpServlet {
             List<Product> products = productDAO.getProductsBySubBrand(subBrand);
             subBrandProducts.add(products);
         }
+         List<String> subBrandsOfLenovo = productDAO.getSubBrandsOfLenovo();
+ String categoryFilter = request.getParameter("category");
+        List<Product> products;
+        
+        if (categoryFilter != null && !categoryFilter.isEmpty()) {
+            products = productDAO.getProductsByCatalog(categoryFilter);
+        } else {
+            products = productDAO.getAllProducts(); // Hiển thị tất cả nếu không chọn danh mục
+        }
 
+        request.setAttribute("products", products);
+        request.setAttribute("selectedCategory", categoryFilter);
         request.setAttribute("brands", brands);
         request.setAttribute("subBrandsOfAsus", subBrandsOfAsus);
         request.setAttribute("brandProducts", brandProducts);
         request.setAttribute("subBrandProducts", subBrandProducts);
+         request.getSession().setAttribute("subBrandsOfLenovo", subBrandsOfLenovo);
+
 
         request.getRequestDispatcher("views/User/Home.jsp").forward(request, response);
     }

@@ -174,8 +174,21 @@
 
                                 <button class=" btn-add-to-cart ms-3 py-2" onclick="addToCart(${product.id})">
                                     ADD TO CART
-                                </button>
+                                
                             </div>
+                                    <div> 
+                                        </br>
+                                    </div>
+                                    <div> 
+                                        ✅ Bảo hành Laptop 12 tháng miễn phí
+                                    </div>
+                                    <div> 
+                                       ✅ Install Windows and Office licenses by machine
+                                    </div>
+                                    <div> 
+                                        ✅ Free screen color scale package worth 300.000 VND
+                                    </div>
+                                    
 
                         </div>
                     </div>
