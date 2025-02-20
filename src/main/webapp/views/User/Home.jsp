@@ -153,6 +153,10 @@
     border: 3px solid #ffcc00; /* Vi?n vàng ?? làm n?i b?t */
     transition: border 0.3s ease-in-out;
 }
+.cata{
+    padding-left: 40px;
+    padding-bottom: 10px;
+}
 
     </style>
 </head>
@@ -160,28 +164,116 @@
 <body>
     <jsp:include page="menu.jsp" />
 
-    <!-- Banner Slider -->
-    <header class="mt-5 pt-3">
-        <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="${pageContext.request.contextPath}/assets/img/1.png" class="d-block w-100">
-                </div>
-                <div class="carousel-item">
-                    <img src="${pageContext.request.contextPath}/assets/img/2.png" class="d-block w-100">
-                </div>
-                <div class="carousel-item">
-                    <img src="${pageContext.request.contextPath}/assets/img/3.png" class="d-block w-100">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
+    
+    <!-- Categories Filter - Hi?n th? 3 nút ngang hàng -->
+<div class="d-flex justify-content-left gap-3 mt-3 cata">
+    <!-- ? L?p danh m?c t? Database (hi?n th? 3 danh m?c ??u tiên) -->
+    <c:forEach var="catalog" items="${catalogs}" begin="0" end="2">
+        <a href="${pageContext.request.contextPath}/CategoryProducts?category=${catalog}" class="btn btn-outline-primary fw-bold">
+            ${catalog}
+        </a>
+    </c:forEach>     
+</div>
+
+<!-- B? l?c giá -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="slider-range"></div>
         </div>
-    </header>
+    </div>
+    <div class="row slider-labels mt-2">
+        <div class="col-6 text-start">
+            <strong>Min:</strong> <span id="slider-range-value1"></span> VND
+        </div>
+        <div class="col-6 text-end">
+            <strong>Max:</strong> <span id="slider-range-value2"></span> VND
+        </div>
+    </div>
+    <!-- Nút l?c giá -->
+    <div class="text-center mt-3">
+        <button id="filter-price-btn" class="btn btn-primary">OK</button>
+    </div>
+</div>
+
+<!-- CSS cho thanh tr??t -->
+<style>
+    #slider-range {
+    width: 60%;  /* ? Gi?m chi?u r?ng xu?ng 60% */
+    margin: 0 auto; /* ? C?n gi?a thanh tr??t */
+}
+
+    #slider-range {
+        height: 6px;
+        background: #ccc;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .slider-selection {
+        height: 100%;
+        background: #345DBB;
+        position: absolute;
+        border-radius: 5px;
+    }
+
+    .slider-handle {
+        width: 20px;
+        height: 20px;
+        background: #345DBB;
+        border-radius: 50%;
+        position: absolute;
+        top: -7px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<!-- Nhúng th? vi?n noUiSlider -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css" />
+
+<!-- JavaScript -->
+<script>
+    $(document).ready(function () {
+        var slider = document.getElementById('slider-range');
+
+        noUiSlider.create(slider, {
+            start: [10000000, 30000000], // Giá tr? m?c ??nh
+            step: 200000, // B??c nh?y
+            range: {
+                'min': 0, // Giá tr? nh? nh?t
+                'max': 60000000  // Giá tr? l?n nh?t
+            },
+            format: {
+                to: function (value) {
+                    return new Intl.NumberFormat('vi-VN').format(value);
+                },
+                from: function (value) {
+                    return Number(value.replace(/,/g, ''));
+                }
+            },
+            connect: true, // Ph?n gi?a ??m h?n
+        });
+
+        // Hi?n th? giá tr? ban ??u
+        slider.noUiSlider.on('update', function (values, handle) {
+            document.getElementById('slider-range-value1').innerHTML = values[0];
+            document.getElementById('slider-range-value2').innerHTML = values[1];
+        });
+
+        // X? lý khi b?m nút "L?c giá"
+        $("#filter-price-btn").click(function () {
+            let minPrice = slider.noUiSlider.get()[0].replace(/\D/g, '');
+            let maxPrice = slider.noUiSlider.get()[1].replace(/\D/g, '');
+
+            // Chuy?n h??ng ??n trang l?c s?n ph?m theo giá
+            window.location.href = "FilterByPrice?minPrice=" + minPrice + "&maxPrice=" + maxPrice;
+        });
+    });
+</script>
+
 
     <!-- N?u có k?t qu? tìm ki?m, hi?n th? s?n ph?m tìm th?y -->
     <c:if test="${not empty searchQuery}">
@@ -215,16 +307,7 @@
     <!-- N?u có tìm ki?m, ?n danh sách s?n ph?m m?c ??nh -->
     <div class="container product-section mt-5 ${not empty searchQuery ? 'hide-section' : ''}">
         
-        <!-- Dropdown Categories -->
-<li class="nav-item dropdown">
-    
-    <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="home.jsp">All Categories</a></li>
-        <li><a class="dropdown-item" href="home.jsp?category=Gaming Laptop">Gaming Laptop</a></li>
-        <li><a class="dropdown-item" href="home.jsp?category=Ultrabook">Ultrabook</a></li>
-        <li><a class="dropdown-item" href="home.jsp?category=Workstation">Workstation</a></li>
-    </ul>
-</li>
+        
 
 
         <c:forEach var="brand" items="${brands}" varStatus="status">

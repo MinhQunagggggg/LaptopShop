@@ -100,26 +100,33 @@
     <jsp:include page="menu.jsp"/>
  
     <div class="container mt-5">
-        <h2 class="text-center a1 mt-3">All Products off ${brandName}</h2>
+    <h2 class="text-center a1 mt-3">
+        All Products of ${subBrandName ne null ? subBrandName : brandName}
+    </h2>
 
-        <div class="row gx-3 gy-4"> 
-            <c:forEach var="product" items="${products}">
-                <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch"> <!-- 🔹 4 sản phẩm trên màn hình lớn -->
-                    <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
-                        <div class="card">
-                            <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
-                            <div class="card-body text-center">
-                                <h5 class="product-title">${product.name}</h5>
-                                <p class="text-success fw-bold">
-                                    <fmt:formatNumber value="${product.price}" pattern="#,###" /> VND
-                                </p>
-                            </div>
+    <div class="row gx-3 gy-4"> 
+        <c:forEach var="product" items="${products}">
+            <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
+                <a href="${pageContext.request.contextPath}/ProductDetail?id=${product.id}" class="text-decoration-none w-100">
+                    <div class="card">
+                        <img class="card-img-top" src="${pageContext.request.contextPath}/assets/img/aa.png" alt="${product.name}">
+                        <div class="card-body text-center">
+                            <h5 class="product-title">${product.name}</h5>
+                            <p class="text-success fw-bold">
+                                <fmt:formatNumber value="${product.price}" pattern="#,###" /> VND
+                            </p>
                         </div>
-                    </a>
-                </div>
-            </c:forEach>
-        </div>
+                    </div>
+                </a>
+            </div>
+        </c:forEach>
     </div>
+
+    <c:if test="${empty products}">
+        <p class="text-center text-muted">Không tìm thấy sản phẩm.</p>
+    </c:if>
+</div>
+
 
 
     <jsp:include page="footer.jsp"/>

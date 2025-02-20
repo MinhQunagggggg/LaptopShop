@@ -22,20 +22,40 @@ import model.Product;
  */
 @WebServlet(name = "BrandProductsServlet", urlPatterns = {"/BrandProducts"})
 public class BrandProductsServlet extends HttpServlet {
+    
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String brandName = request.getParameter("brand");
+        String subBrandName = request.getParameter("subbrand");
 
-        if (brandName == null || brandName.isEmpty()) {
+        // ✅ Kiểm tra nếu brandName bị null, quay về trang chủ
+        if (brandName == null || brandName.trim().isEmpty()) {
             response.sendRedirect("Home");
             return;
         }
 
         ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.getProductsByBrand(brandName);
+        List<Product> products;
 
+        if (subBrandName != null && !subBrandName.trim().isEmpty()) {
+            // ✅ Nếu có SubBrand, lấy sản phẩm theo SubBrand
+            products = productDAO.getProductsBySubBrand(subBrandName);
+            request.setAttribute("pageTitle", "All Products of " + subBrandName);
+        } else {
+            // ✅ Nếu chỉ có Brand, lấy sản phẩm theo Brand
+            products = productDAO.getProductsByBrand(brandName);
+            request.setAttribute("pageTitle", "All Products of " + brandName);
+        }
+
+        // 🔹 Nếu brand là Lenovo, lấy danh sách SubBrands
+        List<String> subBrandsOfLenovo = productDAO.getSubBrandsByBrand("Lenovo");
+
+        // ✅ Gửi dữ liệu về JSP
         request.setAttribute("brandName", brandName);
+        request.setAttribute("subBrandName", subBrandName);
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/views/User/brand-products.jsp").forward(request, response);
+        request.setAttribute("subBrandsOfLenovo", subBrandsOfLenovo); // ✅ Thêm danh sách SubBrands
+
+        request.getRequestDispatcher("views/User/brand-products.jsp").forward(request, response);
     }
 }
