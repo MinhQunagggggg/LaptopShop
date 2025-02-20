@@ -11,7 +11,7 @@
 <head>
     <title>Website</title>
     <link href="${pageContext.request.contextPath}/css/styles.css?v=1.0" rel="stylesheet">
-<script src="${pageContext.request.contextPath}/js/script.js?v=1.0"></script>
+    <script src="${pageContext.request.contextPath}/js/script.js?v=1.0"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- ✅ Thêm Bootstrap Icons -->
@@ -55,93 +55,101 @@
                     <ul class="dropdown-menu">
                         <c:forEach var="catalog" items="${accessoryCatalogs}">
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/ProductList?catalog=${catalog}">${catalog}</a></li>
-                        </c:forEach>
+                            </c:forEach>
                     </ul>
                 </li>
             </ul>
 
             <!-- Giỏ hàng và User -->
             <div class="d-flex align-items-center">
-                
-<!-- Search Form -->
-<form class="d-flex me-3" onsubmit="return false;">
-    <input class="form-control me-2" type="search" id="searchQuery" 
-           placeholder="Search products..." aria-label="Search" autocomplete="off">
-    <button class="btn btn-outline-success" type="button" onclick="searchProducts()" title="Search">
-        <i class="fa fa-search" aria-hidden="true"></i>
-    </button>
-</form>
 
-
-    <!-- Giỏ hàng -->
-    <a href="${pageContext.request.contextPath}/Cart" class="btn btn-outline-dark me-3">
-        <i class="bi bi-cart-fill"></i> Cart 
-        <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-    </a>
-
-        <c:choose>
-            <c:when test="${not empty sessionScope.user}">
-                <!-- Dropdown User -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown">
-                        <img src="${pageContext.request.contextPath}/assets/img/user.jpg" alt="User" width="30" height="30" class="rounded-circle me-2">
-                        ${sessionScope.user.name}
+                <!-- Search Form -->
+                <form class="d-flex me-3" onsubmit="return false;">
+                    <input class="form-control me-2" type="search" id="searchQuery" 
+                           placeholder="Search products..." aria-label="Search" autocomplete="off">
+                    <button class="btn btn-outline-success" type="button" onclick="searchProducts()" title="Search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Profile"><i class="bi bi-person"></i> View Profile</a></li>
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/EditProfile"><i class="bi bi-pencil-square"></i> Edit Profile</a></li>
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/ChangePassword"><i class="bi bi-key"></i> Change Password</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/Logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-                    </ul>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <!-- Nút Login -->
-                <a href="${pageContext.request.contextPath}/Login" class="btn btn-outline-primary">
-                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </form>
+
+
+                <!-- Giỏ hàng -->
+                <a href="${pageContext.request.contextPath}/Cart" class="btn btn-outline-dark me-3">
+                    <i class="bi bi-cart-fill"></i> Cart 
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
                 </a>
-            </c:otherwise>
-        </c:choose>
-</div>
-<style>
-    html, body {
-    text-size-adjust: 100%; /* Thay vì -webkit-text-size-adjust */
-}
 
-.some-class {
-    text-align: match-parent; /* Safari hỗ trợ */
-    text-align: -webkit-match-parent; /* Các trình duyệt khác */
-}
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <!-- Dropdown User -->
+                        <a href="${pageContext.request.contextPath}/Logout" class="btn btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Logout
+                        </a>
+                        <div class="dropdown">
+                            <img src="${pageContext.request.contextPath}/assets/img/user.png" 
+                                 alt="User" width="40" height="40" 
+                                 class="rounded-circle dropdown-toggle" 
+                                 id="userMenu" data-bs-toggle="dropdown" role="button" aria-expanded="false">
 
-    body {
-        padding-top: 80px;
-    }
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                <li class="dropdown-header text-center fw-bold">${sessionScope.user.name}</li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Profile">
+                                        <i class="bi bi-person"></i> View Profile</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/EditProfile">
+                                        <i class="bi bi-pencil-square"></i> Edit Profile</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/ChangePassword">
+                                        <i class="bi bi-key"></i> Change Password</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            </ul>
+                        </div>
 
-    /* Định dạng menu */
-    .navbar-nav .nav-item {
-        margin-right: 15px; /* Tăng khoảng cách giữa các thương hiệu */
-    }
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Nút Login -->
+                        <a href="${pageContext.request.contextPath}/Login" class="btn btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <style>
+                html, body {
+                    text-size-adjust: 100%; /* Thay vì -webkit-text-size-adjust */
+                }
 
-    .navbar-nav .nav-link {
-        font-weight: bold;
-        color: #333;
-    }
+                .some-class {
+                    text-align: match-parent; /* Safari hỗ trợ */
+                    text-align: -webkit-match-parent; /* Các trình duyệt khác */
+                }
 
-    .navbar-nav .nav-link:hover {
-        color: #007bff;
-    }
+                body {
+                    padding-top: 80px;
+                }
 
-    /* Định dạng dropdown */
-    .dropdown-menu {
-        min-width: 200px;
-    }
+                /* Định dạng menu */
+                .navbar-nav .nav-item {
+                    margin-right: 15px; /* Tăng khoảng cách giữa các thương hiệu */
+                }
 
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-        color: #007bff;
-    }
-</style>
+                .navbar-nav .nav-link {
+                    font-weight: bold;
+                    color: #333;
+                }
+
+                .navbar-nav .nav-link:hover {
+                    color: #007bff;
+                }
+
+                /* Định dạng dropdown */
+                .dropdown-menu {
+                    min-width: 200px;
+                }
+
+                .dropdown-item:hover {
+                    background-color: #f8f9fa;
+                    color: #007bff;
+                }
+            </style>
 
 
         </div>

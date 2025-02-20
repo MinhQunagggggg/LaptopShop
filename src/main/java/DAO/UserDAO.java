@@ -5,6 +5,9 @@
 package DAO;
 
 import DB.DBContext;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import model.User;
 import java.sql.*;
 
@@ -67,27 +70,85 @@ public class UserDAO {
         }
         return false;
     }
-
-    /**
-     *
-     * @param username
-     * @param password
-     * @return
-     */
-    public User getUser(String username, String password) {
-        String query = "SELECT user_id, username, name FROM Users WHERE username = ? AND password = ?";
+ public User getUser(String username, String password) {
+        String query = "SELECT user_id, username, name, role_id, password FROM Users WHERE username = ?";
 
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
             ps.setString(1, username);
-            ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"));
-            }
+                String storedPassword = rs.getString("password").trim();
+                String hashedInputPassword = hashMD5(password).trim();
+
+                if (storedPassword.equals(hashedInputPassword)) {
+                    return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getInt("role_id"));
+                } 
+            } 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-}
+
+    public static String hashMD5(String input) {
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : messageDigest) {
+                sb.append(String.format("%02x", b & 0xFF));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
+
+    public boolean isUserExists(String username, String email) {
+        String query = "SELECT COUNT(*) FROM Users WHERE username = ? OR email = ?";
+        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, username);
+            ps.setString(2, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Thêm người dùng mới vào database
+    public boolean registerUser(String name, String email, String phone, String username, String password) {
+        if (isUserExists(username, email)) {
+            return false; // Không cho phép đăng ký nếu đã tồn tại
+        }
+
+        String query = "INSERT INTO Users (name, email, phone, username, password, role_id) VALUES (?, ?, ?, ?, ?, 1)";
+        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            String Pass = hashMD5(password); // Mã hóa mật khẩu
+
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.setString(3, phone);
+            ps.setString(4, username);
+            ps.setString(5, Pass); // Mã hóa mật khẩu
+
+            int result = ps.executeUpdate();
+
+            return result > 0;
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+        return false;
+    }}

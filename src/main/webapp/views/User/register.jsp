@@ -3,11 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login Page</title>
+        <title>Register Page</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- FontAwesome for Icons -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
         <style>
             body {
                 margin: 0;
@@ -17,23 +15,20 @@
                 min-height: 100vh;
                 background-color: #f8f9fa;
             }
-
-            .login-container {
+            .register-container {
                 display: flex;
                 flex: 1;
                 width: 100%;
                 height: 100vh;
             }
-
-            .login-section {
+            .register-section {
                 flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 background-color: white;
             }
-
-            .login-card {
+            .register-card {
                 width: 100%;
                 max-width: 400px;
                 padding: 40px;
@@ -41,73 +36,79 @@
                 border-radius: 10px;
                 background: white;
             }
-
-            .login-card h3 {
+            .register-card h3 {
                 font-size: 26px;
                 font-weight: bold;
                 margin-bottom: 25px;
                 text-align: center;
             }
-
             .form-group label {
                 font-size: 16px;
                 font-weight: bold;
             }
-
             .btn {
                 font-size: 16px;
                 padding: 12px;
                 border-radius: 6px;
             }
-
             .text-links a {
                 font-size: 14px;
                 text-decoration: none;
                 color: #007bff;
             }
-
             .text-links a:hover {
                 text-decoration: underline;
             }
-
             .image-section {
                 flex: 1;
-                background-image: url('${pageContext.request.contextPath}/assets/img/loginimage.png');
+                background-image: url('<%= request.getContextPath() %>/assets/img/loginimage.png');
                 background-size: cover;
                 background-position: center;
-            }
-
-            .footer {
-                width: 100%;
-                background: #f1f1f1;
-                text-align: center;
-                padding: 10px 0;
-                margin-top: auto;
             }
         </style>
     </head>
     <body>
         <jsp:include page="menu.jsp" />
 
-        <div class="login-container">
-            <div class="login-section">
-                <div class="login-card">
-                    <h3>Sign In</h3>
+        <div class="register-container">
+            <div class="register-section">
+                <div class="register-card">
+                    <h3>Sign Up</h3>
 
                     <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
                     <% if (errorMessage != null) { %>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Login failed!</strong> <%= errorMessage %>
+                        <strong>Registration failed!</strong> <%= errorMessage %>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <% } %>
 
-                    <form action="Login" method="post">
+                    <form action="${pageContext.request.contextPath}/Register" method="post" onsubmit="return validateForm()">
+
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="<%= request.getAttribute("name") != null ? request.getAttribute("name") : "" %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<%= request.getAttribute("email") != null ? request.getAttribute("email") : "" %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone" 
+                                   value="<%= request.getAttribute("phone") != null ? request.getAttribute("phone") : "" %>" required>
+                        </div>
+
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="<%= request.getAttribute("username") != null ? request.getAttribute("username") : "" %>" required>
                         </div>
 
                         <div class="form-group">
@@ -115,21 +116,13 @@
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-
-                        <div class="text-center mt-3 text-links">
-                            <a href="forgot-password.jsp">Forgot Password?</a> | 
-                            <a href="views/User/register.jsp">Create an account</a>
+                        <div class="form-group">
+                            <label for="remake_password">Re-enter Password</label>
+                            <input type="password" class="form-control" id="remake_password" name="remake_password" required>
                         </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </form>
-
-                    <hr>
-
-                    <div class="text-center">
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:9999/Login&response_type=code&client_id=477587688262-srlo90s1bvkumuu67oud60pqfngvqcpo.apps.googleusercontent.com&approval_prompt=force">
-                            <img src="${pageContext.request.contextPath}/assets/img/logogg.webp" alt="Sign in with Google" width="40">
-                        </a>
-                    </div>
                 </div>
             </div>
 
@@ -140,5 +133,26 @@
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            function validateForm() {
+                var password = document.getElementById("password").value;
+                var remakePassword = document.getElementById("remake_password").value;
+                var phone = document.getElementById("phone").value;
+                var phoneRegex = /^[0-9]{10}$/; // Ch? ch?p nh?n 10 s?
+
+                if (!phoneRegex.test(phone)) {
+                    alert("Phone number must be 10 digits.");
+                    return false;
+                }
+
+                if (password !== remakePassword) {
+                    alert("Passwords do not match.");
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
     </body>
 </html>

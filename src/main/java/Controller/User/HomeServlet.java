@@ -7,7 +7,6 @@ package Controller.User;
 import model.Product;
 import DAO.ProductDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,7 +32,6 @@ public class HomeServlet extends HttpServlet {
             List<Product> products = productDAO.getProductsByBrand(brand);
             brandProducts.add(products);
         }
-
         request.setAttribute("brands", brands);
         request.setAttribute("brandProducts", brandProducts);
         request.getRequestDispatcher("views/User/Home.jsp").forward(request, response);
