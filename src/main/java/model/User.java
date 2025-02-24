@@ -16,8 +16,8 @@ public class User {
     private String email;
     private String phone;
     private String password;
+    private String Avatar_url;
 
-    // Constructor mặc định
     public User() {
     }
 
@@ -30,9 +30,15 @@ public class User {
         this.phone = phone;
     }
 
-    public User(int user_id, String username, String name) {
-        this.id = user_id;
+    public User(int id, String username, String email, String password) {
+        this.id = id;
         this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(int user_id, String name) {
+        this.id = user_id;
         this.name = name;
     }
 
