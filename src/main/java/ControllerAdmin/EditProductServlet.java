@@ -12,17 +12,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import java.io.ByteArrayOutputStream;
 
 @WebServlet("/EditProductServlet")
 @MultipartConfig(maxFileSize = 16177215) // Giới hạn file upload (16MB)
 public class EditProductServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
     private ProductDAO productDAO = new ProductDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String productIdStr = request.getParameter("productId");
-        
+
         if (productIdStr != null && !productIdStr.trim().isEmpty()) {
             try {
                 int productId = Integer.parseInt(productIdStr.trim());
@@ -61,7 +63,15 @@ public class EditProductServlet extends HttpServlet {
             byte[] imageData = null;
             if (filePart != null && filePart.getSize() > 0) {
                 InputStream fileContent = filePart.getInputStream();
-                imageData = fileContent.readAllBytes();
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                int nRead;
+                byte[] data = new byte[1024]; // Đọc từng phần nhỏ 1KB
+                while ((nRead = fileContent.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                buffer.flush();
+                imageData = buffer.toByteArray();
+
             } else if (existingProduct != null) {
                 imageData = existingProduct.getImageData();
             }

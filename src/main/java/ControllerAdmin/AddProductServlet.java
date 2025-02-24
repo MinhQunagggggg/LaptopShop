@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import java.io.ByteArrayOutputStream;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import modelAdmin.Headphone;
@@ -51,7 +52,14 @@ public class AddProductServlet extends HttpServlet {
 
             Part filePart = request.getPart("image_data");
             InputStream inputStream = filePart.getInputStream();
-            byte[] imageData = inputStream.readAllBytes();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[1024]; // Đọc từng phần nhỏ 1KB
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            byte[] imageData = buffer.toByteArray();
 
             ProductAdmin product = new ProductAdmin(name, description, categoryId, brandId, subBrandId, catalogId, imageData);
             ProductDAO productDAO = new ProductDAO();

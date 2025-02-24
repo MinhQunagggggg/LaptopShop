@@ -87,7 +87,7 @@ public class UserDAO {
     }
 
     public User getUser(String username, String password) {
-        String query = "SELECT user_id,name, password FROM Users WHERE username = ?";
+        String query = "SELECT user_id,name,role_id, password FROM Users WHERE username = ?";
 
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -99,7 +99,7 @@ public class UserDAO {
                 String hashedInputPassword = hashMD5(password).trim();
 
                 if (storedPassword.equals(hashedInputPassword)) {
-                    return new User(rs.getInt("user_id"), rs.getString("name"));
+                    return new User(rs.getInt("user_id"), rs.getString("name"),rs.getInt("role_id"));
                 }
             }
         } catch (SQLException e) {
