@@ -15,15 +15,48 @@ import java.sql.SQLException;
  */
 
 public class RatingDAO {
-    public double getProductAverageRating(int productId) {
-        String query = "SELECT COALESCE(ROUND(AVG(rating), 1), 0) AS avg_rating FROM Ratings WHERE product_id = ?";
-        
+     // 🔹 Kiểm tra nếu user đã đánh giá sản phẩm này chưa
+    public boolean hasUserRated(int productId, int userId) {
+        String query = "SELECT COUNT(*) FROM Ratings WHERE product_id = ? AND user_id = ?";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, productId);
+            ps.setInt(2, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getDouble("avg_rating");
+                return rs.getInt(1) > 0; 
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // 🔹 Thêm đánh giá vào cơ sở dữ liệu (trả về true nếu thành công)
+    public boolean addRating(int productId, int userId, int rating) {
+        String query = "INSERT INTO Ratings (product_id, user_id, rating) VALUES (?, ?, ?)";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, productId);
+            ps.setInt(2, userId);
+            ps.setInt(3, rating);
+            return ps.executeUpdate() > 0; // ✅ Kiểm tra xem có bao nhiêu dòng được thêm
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // 🔹 Lấy rating của user cho sản phẩm
+    public int getUserRating(int productId, int userId) {
+        String query = "SELECT rating FROM Ratings WHERE product_id = ? AND user_id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, productId);
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("rating");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,17 +64,20 @@ public class RatingDAO {
         return 0;
     }
 
-    public void saveRating(int userId, int productId, int rating) {
-        String query = "INSERT INTO Ratings (user_id, product_id, rating) VALUES (?, ?, ?)";
-
+    // 🔹 Lấy điểm trung bình đánh giá
+    public double getAverageRating(int productId) {
+        String query = "SELECT ROUND(AVG(CAST(rating AS FLOAT)), 1) AS average_rating FROM Ratings WHERE product_id = ?";
+        double avgRating = 0;
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, productId);
-            ps.setInt(3, rating);
-            ps.executeUpdate();
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                avgRating = rs.getDouble(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return avgRating;
     }
 }

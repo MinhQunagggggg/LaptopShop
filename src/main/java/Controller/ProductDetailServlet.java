@@ -10,9 +10,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.Comment;
+import model.User;
 
 /**
  *
@@ -41,26 +44,50 @@ public class ProductDetailServlet extends HttpServlet {
         RatingDAO ratingDAO = new RatingDAO();
         CommentDAO commentDAO = new CommentDAO();
 
-        // Lấy thông tin sản phẩm
         Product product = productDAO.getProductInfo(productId);
         if (product == null) {
             response.sendRedirect("Home");
             return;
         }
 
-        // Lấy thông số kỹ thuật
+        // Lấy thông số kỹ thuật sản phẩm
         productDAO.getProductSpecifications(product);
+        double avgRating = ratingDAO.getAverageRating(productId);
 
-        // Lấy đánh giá trung bình
-        double avgRating = ratingDAO.getProductAverageRating(productId);
+        // 🔹 Lấy danh sách bình luận cha
+        List<Comment> parentComments = commentDAO.getParentComments(productId);
 
-        // Lấy danh sách bình luận
-        List<Comment> comments = commentDAO.getProductComments(productId);
+        // 🔹 Lấy danh sách phản hồi
+        List<Comment> replies = commentDAO.getReplies(productId);
 
-        // Gửi dữ liệu sang JSP
+        // 🔹 Gán các phản hồi vào bình luận cha
+        for (Comment parent : parentComments) {
+            List<Comment> childReplies = new ArrayList<>();
+            for (Comment reply : replies) {
+                if (reply.getParentCommentId() == parent.getCommentId()) {
+                    childReplies.add(reply);
+                }
+            }
+            parent.setReplies(childReplies);
+        }
+        // Lấy user từ session
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        boolean userRated = false;
+        int userRating = 0;
+
+        if (user != null) {
+            userRated = ratingDAO.hasUserRated(productId, user.getId());
+            if (userRated) {
+                userRating = ratingDAO.getUserRating(productId, user.getId());
+            }
+        }
         request.setAttribute("product", product);
         request.setAttribute("averageRating", avgRating);
-        request.setAttribute("comments", comments);
+        request.setAttribute("parentComments", parentComments);
+        request.setAttribute("userRated", userRated);
+        request.setAttribute("userRating", userRating);
+
         request.getRequestDispatcher("views/User/product-detail.jsp").forward(request, response);
     }
 }
