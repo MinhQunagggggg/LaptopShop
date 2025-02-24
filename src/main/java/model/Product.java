@@ -18,7 +18,7 @@ public class Product {
     private int id;
     private String name;
     private String description;
-    private String imageUrl;
+    private byte[] imageData;
     private double price;
     private String brandName;
     private String categoryName;
@@ -43,10 +43,10 @@ public class Product {
      private int catalogId;
      private Map<String, String> specifications;
 
-   public Product(int id, String name, String imageUrl, String description, double price, String brandName, String categoryName, int catalogId) {
+   public Product(int id, String name, byte[] imageData, String description, double price, String brandName, String categoryName, int catalogId) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageData = imageData;
         this.description = description;
         this.price = price;
         this.brandName = brandName;
@@ -55,27 +55,27 @@ public class Product {
     }
     
 
- public Product(int id, String name, String imageUrl, double price, String brandName, String description) {
+ public Product(int id, String name, byte[] imageData, double price, String brandName, String description) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageData = imageData;
         this.price = price;
         this.brandName = brandName;
         this.description = description;
     }
 
-    public Product(int id, String name, String imageUrl, double price, String description) {
+    public Product(int id, String name, byte[] imageData, double price, String description) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageData = imageData;
         this.price = price;
         this.description = description;
     }
 
-    public Product(int id, String name, String imageUrl, double price) {
+    public Product(int id, String name, byte[] imageData, double price) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageData = imageData;
         this.price = price;
     }
 
@@ -83,7 +83,8 @@ public class Product {
     public int getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public String getImageUrl() { return imageUrl; }
+   public byte[] getImageData() { return imageData; }
+
     public double getPrice() { return price; }
     public String getBrandName() { return brandName; }
     public String getCategoryName() { return categoryName; }

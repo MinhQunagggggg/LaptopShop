@@ -87,7 +87,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="menu.jsp" />
+       
 
         <div class="login-container">
             <div class="login-section">
@@ -136,7 +136,7 @@
             <div class="image-section"></div>
         </div>
 
-        <jsp:include page="footer.jsp" />
+     
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

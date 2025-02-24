@@ -1,0 +1,39 @@
+[33m0fb3c9f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit: Lưu lại code trước khi pull MQ
+[33mbc01cc4[m HEAD@{1}: checkout: moving from mqcode3 to master
+[33maf53ee4[m HEAD@{2}: commit: Lưu lại thay đổi trước khi chuyển nhánh
+[33me6a338d[m HEAD@{3}: reset: moving to HEAD
+[33me6a338d[m HEAD@{4}: commit (merge): re commit mqcode3
+[33m1ef22be[m HEAD@{5}: commit: Mq push login
+[33mbc01cc4[m HEAD@{6}: checkout: moving from master to mqcode3
+[33mbc01cc4[m HEAD@{7}: checkout: moving from mqcode2 to master
+[33m2e0f777[m HEAD@{8}: commit: MQ code 2 lan 2
+[33m84fccd6[m HEAD@{9}: commit: Mq code 2
+[33mbc01cc4[m HEAD@{10}: checkout: moving from master to mqcode2
+[33mbc01cc4[m HEAD@{11}: checkout: moving from mqcode to master
+[33m37c2b33[m HEAD@{12}: commit: MQ up code len
+[33mbc01cc4[m HEAD@{13}: checkout: moving from master to mqcode
+[33mbc01cc4[m HEAD@{14}: pull origin master: Fast-forward
+[33m17a3360[m HEAD@{15}: checkout: moving from master to master
+[33m17a3360[m HEAD@{16}: pull origin master: Fast-forward
+[33m66e2e20[m HEAD@{17}: checkout: moving from test to master
+[33m7702cbd[m HEAD@{18}: commit: Quang test git
+[33m66e2e20[m HEAD@{19}: checkout: moving from master to test
+[33m66e2e20[m HEAD@{20}: checkout: moving from feature-update to master
+[33m66e2e20[m HEAD@{21}: checkout: moving from master to feature-update
+[33m66e2e20[m HEAD@{22}: checkout: moving from quang-update to master
+[33m66e2e20[m HEAD@{23}: checkout: moving from master to quang-update
+[33m66e2e20[m HEAD@{24}: commit: Quang cập nhật ProductDAO phan search product và SearchServlet
+[33mcf6a762[m HEAD@{25}: commit: Quang Cập nhật SearchServlet và ProductDAO
+[33m1b429d1[m HEAD@{26}: checkout: moving from master to master
+[33m1b429d1[m HEAD@{27}: commit: Khôi phục file bị mất
+[33mfe58772[m HEAD@{28}: checkout: moving from quang19.2 to master
+[33mfe58772[m HEAD@{29}: checkout: moving from master to quang19.2
+[33mfe58772[m HEAD@{30}: merge origin/master: Fast-forward
+[33m45f336d[m HEAD@{31}: checkout: moving from quang to master
+[33m02425ff[m HEAD@{32}: commit: giaodien
+[33m45f336d[m HEAD@{33}: checkout: moving from master to quang
+[33m45f336d[m HEAD@{34}: commit: 
+[33m49ef8ee[m HEAD@{35}: commit: 
+[33mfe24b61[m HEAD@{36}: rebase finished: returning to refs/heads/master
+[33mfe24b61[m HEAD@{37}: checkout: moving from master to fe24b612d07c6e094f8caeadbc43f81cfeead1b0
+[33mc6c81d7[m HEAD@{38}: commit (initial): 
