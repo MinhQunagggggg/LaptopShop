@@ -1,24 +1,48 @@
-D:\2025\SWP\LaptopShop-master\src\main\java\model\Product.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\RegisterServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DB\DBContext.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DAO\ProductDAO.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\ViewProductListServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\FilterByPriceServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\LoginServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DAO\CommentDAO.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\FilterByBrandServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\FindProductServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\model\Comment.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DAO\BrandDAO.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\RatingServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DAO\RatingDAO.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\BrandProductsServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\ProductListServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\model\User.java
-D:\2025\SWP\LaptopShop-master\src\main\java\DAO\UserDAO.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\ProductDetailServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\model\aaaa.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\EditProfileServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\SearchServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\Controller\HomeServlet.java
-D:\2025\SWP\LaptopShop-master\src\main\java\model\Brand.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\AddCommentServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\RegisterServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\UpdateOrderStatusServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\DeleteCommentServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO_Staff\OrderDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\OrderListServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\ViewAllProductsServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\ViewProductsServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\Product.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\RemoveFromCartServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\AllProductsServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\ViewCartServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\FilterByPriceServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO_Staff\ProductDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\HomeServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\OrderDetailServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\LogoutServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\aaaa.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\CheckoutServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\RatingDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\Comment.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\CommentServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\ControllerStaff\DashboardServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Model_Staff\Order.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\UpdateCartServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\BrandProductsServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DB\DBContext.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\ProductListServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\AddToCartServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Model_Staff\OrderDetail.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO_Staff\CommentDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\ProductDetailServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\CategoryProductsServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\UserDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Model_Staff\Comment.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\EditCommentServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\BrandDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\CartDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\SearchServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\CommentDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\CartItem.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\EditProfileServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\RateProductServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\Brand.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\LoginServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\Controller\ProductImageServlet.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\DAO\ProductDAO.java
+C:\Users\PC\OneDrive\Máy tính\Down\LaptopShop\src\main\java\model\User.java

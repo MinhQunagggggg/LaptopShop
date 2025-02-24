@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Map;
  * @author CE182250
  */
 public class Product {
+
     private int id;
     private String name;
     private String description;
@@ -40,10 +42,10 @@ public class Product {
     private String refreshRate;
     private double averageRating;
     private String comments;
-     private int catalogId;
-     private Map<String, String> specifications;
+    private int catalogId;
+    private Map<String, String> specifications;
 
-   public Product(int id, String name, byte[] imageData, String description, double price, String brandName, String categoryName, int catalogId) {
+    public Product(int id, String name, byte[] imageData, String description, double price, String brandName, String categoryName, int catalogId) {
         this.id = id;
         this.name = name;
         this.imageData = imageData;
@@ -53,9 +55,8 @@ public class Product {
         this.categoryName = categoryName;
         this.catalogId = catalogId;
     }
-    
 
- public Product(int id, String name, byte[] imageData, double price, String brandName, String description) {
+    public Product(int id, String name, byte[] imageData, double price, String brandName, String description) {
         this.id = id;
         this.name = name;
         this.imageData = imageData;
@@ -79,49 +80,136 @@ public class Product {
         this.price = price;
     }
 
-// Getter để lấy dữ liệu trong JSP
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-   public byte[] getImageData() { return imageData; }
+    public Product(int id, String name, byte[] imageData, String description, double price) {
+        this.id = id;
+        this.name = name;
+        this.imageData = imageData;
+        this.description = description;
+        this.price = price;
+    }
 
-    public double getPrice() { return price; }
-    public String getBrandName() { return brandName; }
-    public String getCategoryName() { return categoryName; }
-    public String getSubBrandName() { return subBrandName; }
-    public String getAccessoryBrand() { return accessoryBrand; }
-    public String getRam() { return ram; }
-    public String getCpu() { return cpu; }
-    public String getStorage() { return storage; }
-    public String getScreen() { return screen; }
-    public String getPorts() { return ports; }
-    public String getBattery() { return battery; }
-    public String getWeight() { return weight; }
-    public String getDimensions() { return dimensions; }
-    public String getOs() { return os; }
-    public String getKeyboard() { return keyboard; }
-    public String getMaterial() { return material; }
-    public String getWarranty() { return warranty; }
-    public String getCondition() { return condition; }
-    public String getRefreshRate() { return refreshRate; }
-    public double getAverageRating() { return averageRating; }
-    public String getComments() { return comments; }
-    public int getCatalogId() { return catalogId; }
-    public Map<String, String> getSpecifications() { return specifications; }
+
+// Getter để lấy dữ liệu trong JSP
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public String getSubBrandName() {
+        return subBrandName;
+    }
+
+    public String getAccessoryBrand() {
+        return accessoryBrand;
+    }
+
+    public String getRam() {
+        return ram;
+    }
+
+    public String getCpu() {
+        return cpu;
+    }
+
+    public String getStorage() {
+        return storage;
+    }
+
+    public String getScreen() {
+        return screen;
+    }
+
+    public String getPorts() {
+        return ports;
+    }
+
+    public String getBattery() {
+        return battery;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public String getDimensions() {
+        return dimensions;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public String getKeyboard() {
+        return keyboard;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public String getWarranty() {
+        return warranty;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public String getRefreshRate() {
+        return refreshRate;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public int getCatalogId() {
+        return catalogId;
+    }
+
+    public Map<String, String> getSpecifications() {
+        return specifications;
+    }
 
     public void setSpecifications(Map<String, String> specifications) {
         this.specifications = specifications;
     }
+
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
-     public List<String> getCommentsList() {
+
+    public List<String> getCommentsList() {
         if (comments == null || comments.isEmpty()) {
             return new ArrayList<>();
         }
         return Arrays.asList(comments.split("\\|"));
     }
 }
-
-
-   
