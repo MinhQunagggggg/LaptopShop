@@ -24,7 +24,7 @@ public class DBContext {
         try {
             String user = "sa";
             String url = "jdbc:sqlserver://localhost:1433;databaseName=LaptopShop;encrypt=false";
-            String pass = "123"; // Đổi lại theo pass sa
+            String pass = "123456"; // Đổi lại theo pass sa
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             conn = DriverManager.getConnection(url, user, pass);
         } catch (SQLException | ClassNotFoundException ex) {
