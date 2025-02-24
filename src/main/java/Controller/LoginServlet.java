@@ -17,7 +17,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("views/User/login.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/User/login.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -30,25 +30,24 @@ public class LoginServlet extends HttpServlet {
         User user = userDAO.getUser(username, password);
 
         if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("userId", user.getId()); // Lưu userId vào session
-            
-            
-
-            // Nếu có redirect, quay lại trang đó sau khi đăng nhập
-            String redirectURL = request.getParameter("redirect");
-            if (redirectURL != null) {
-                session.removeAttribute("redirectAfterLogin");
-                response.sendRedirect(redirectURL);
-            } else {
+            if (user.getRole_id() == 1) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
                 response.sendRedirect(request.getContextPath() + "/Home");
+            } else if (user.getRole_id() == 2) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/list-products");
+            } else {
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/Dashboard");
             }
+
         } else {
             request.setAttribute("errorMessage", "Incorrect username or password!");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("views/User/login.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/views/User/login.jsp");
             dispatcher.forward(request, response);
         }
     }
 }
-

@@ -16,11 +16,11 @@ public class User {
     private String email;
     private String phone;
     private String password;
-
-    // Constructor mặc định
+    private String Avatar_url;
+    private int role_id;
     public User() {
     }
-
+    
     // Constructor đầy đủ
     public User(int id, String name, String username, String email, String phone) {
         this.id = id;
@@ -30,9 +30,23 @@ public class User {
         this.phone = phone;
     }
 
-    public User(int user_id, String username, String name) {
-        this.id = user_id;
+    public User(int id, String name, int role_id) {
+        this.id = id;
+        this.name = name;
+        this.role_id = role_id;
+    }
+
+   
+    
+    public User(int id, String username, String email, String password) {
+        this.id = id;
         this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(int user_id, String name) {
+        this.id = user_id;
         this.name = name;
     }
 
@@ -89,4 +103,21 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getAvatar_url() {
+        return Avatar_url;
+    }
+
+    public void setAvatar_url(String Avatar_url) {
+        this.Avatar_url = Avatar_url;
+    }
+
+    public int getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(int role_id) {
+        this.role_id = role_id;
+    }
+    
 }
