@@ -5,6 +5,7 @@
 
 package Controller;
 
+import DAO.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,72 +13,36 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Product;
 
 /**
  *
  * @author CE182250
  */
-@WebServlet(name="FilterByPriceServlet", urlPatterns={"/FilterByPriceServlet"})
+@WebServlet(name = "FilterByPriceServlet", urlPatterns = {"/FilterByPrice"})
 public class FilterByPriceServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FilterByPriceServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet FilterByPriceServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+        // Nhận giá trị minPrice và maxPrice từ request
+        String minPriceParam = request.getParameter("minPrice");
+        String maxPriceParam = request.getParameter("maxPrice");
+
+        double minPrice = (minPriceParam != null) ? Double.parseDouble(minPriceParam) : 20000000;
+        double maxPrice = (maxPriceParam != null) ? Double.parseDouble(maxPriceParam) : 30000000;
+
+        // Gọi DAO để lấy sản phẩm theo khoảng giá
+        ProductDAO productDAO = new ProductDAO();
+        List<Product> filteredProducts = productDAO.getProductsByPriceRange(minPrice, maxPrice);
+
+        // Gửi danh sách sản phẩm đã lọc về JSP để hiển thị
+        request.setAttribute("products", filteredProducts);
+        request.setAttribute("minPrice", minPrice);
+        request.setAttribute("maxPrice", maxPrice);
+
+        request.getRequestDispatcher("views/User/filter-by-price.jsp").forward(request, response);
     }
-
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

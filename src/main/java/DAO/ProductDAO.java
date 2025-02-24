@@ -24,7 +24,7 @@ public class ProductDAO {
     
     public List<Product> getProductsByCatalog(String catalogName) {
     List<Product> products = new ArrayList<>();
-    String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price " +
                    "FROM Products p " +
                    "JOIN ProductVariants v ON p.product_id = v.product_id " +
                    "JOIN Catalog c ON p.catalog_id = c.catalog_id " +
@@ -39,10 +39,83 @@ public class ProductDAO {
                 products.add(new Product(
                     rs.getInt("product_id"),
                     rs.getString("name"),
-                    rs.getString("image_url"),
+                    rs.getBytes("image_data"),
                     rs.getDouble("price")
                 ));
             }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return products;
+}
+    
+    public List<String> getAllCatalogs() {
+    List<String> catalogs = new ArrayList<>();
+    String query = "SELECT DISTINCT name FROM Categories"; // Lấy danh mục từ DB
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            catalogs.add(rs.getString("name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return catalogs;
+}
+public List<Product> getProductsByPriceRange(double minPrice, double maxPrice) {
+    List<Product> products = new ArrayList<>();
+    String query = "SELECT DISTINCT p.product_id, " +
+                   "       p.name AS product_name, " +
+                   "       p.image_data, " +
+                   "       v.price " +
+                   "FROM Products p " +
+                   "JOIN ProductVariants v ON p.product_id = v.product_id " +
+                   "WHERE v.price BETWEEN ? AND ? " + // 🔹 Giới hạn khoảng giá
+                   "ORDER BY v.price ASC";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setDouble(1, minPrice);
+        ps.setDouble(2, maxPrice);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            products.add(new Product(
+                rs.getInt("product_id"),
+                rs.getString("product_name"),
+                rs.getBytes("image_data"),
+                rs.getDouble("price")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return products;
+}
+
+    
+public List<Product> getProductsByCategories(String categoryName) {
+    List<Product> products = new ArrayList<>();
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price " +
+                   "FROM Products p " +
+                   "JOIN ProductVariants v ON p.product_id = v.product_id " +
+                   "JOIN Categories c ON p.category_id = c.category_id " +
+                   "WHERE c.name = ? " +
+                   "ORDER BY p.product_id";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, categoryName);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            products.add(new Product(
+                rs.getInt("product_id"),
+                rs.getString("name"),
+                rs.getBytes("image_data"),
+                rs.getDouble("price")
+            ));
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -73,7 +146,7 @@ public List<String> getBrandsByCatalog(String catalogName) {
 
     public List<Product> getProductsByCatalogAndBrand(String catalogName, String brandName) {
     List<Product> products = new ArrayList<>();
-    String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price " +
                    "FROM Products p " +
                    "JOIN ProductVariants v ON p.product_id = v.product_id " +
                    "JOIN Brands b ON p.brand_id = b.brand_id " +
@@ -89,7 +162,7 @@ public List<String> getBrandsByCatalog(String catalogName) {
                 products.add(new Product(
                     rs.getInt("product_id"),
                     rs.getString("name"),
-                    rs.getString("image_url"),
+                  rs.getBytes("image_data"),
                     rs.getDouble("price")
                 ));
             }
@@ -120,7 +193,7 @@ public List<String> getBrandsByCatalog(String catalogName) {
 public List<Product> searchByName(String txtSearch) {
     List<Product> list = new ArrayList<>();
     String query = "SELECT TOP 10 " +
-                   "    p.product_id, p.name AS product_name, p.image_url, " +
+                   "    p.product_id, p.name AS product_name, p.image_data, " +
                    "    p.description, COALESCE(b.name, 'N/A') AS brand_name, " +
                    "    v.price, v.stock " +
                    "FROM Products p " +
@@ -139,7 +212,7 @@ public List<Product> searchByName(String txtSearch) {
             list.add(new Product(
                 rs.getInt("product_id"),
                 rs.getString("product_name"),
-                rs.getString("image_url"),
+                rs.getBytes("image_data"),
                 rs.getDouble("price"),
                 rs.getString("brand_name"),
                 rs.getString("description")
@@ -171,7 +244,7 @@ public List<Product> searchByName(String txtSearch) {
 
     public List<Product> getAllProducts() {
     List<Product> list = new ArrayList<>();
-    String query = "SELECT p.product_id, p.name, p.image_url, v.price, b.name as brand_name, p.description " +
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price, b.name as brand_name, p.description " +
                    "FROM Products p " +
                    "JOIN ProductVariants v ON p.product_id = v.product_id " +
                    "JOIN Brands b ON p.brand_id = b.brand_id";
@@ -184,7 +257,7 @@ public List<Product> searchByName(String txtSearch) {
             list.add(new Product(
                 rs.getInt("product_id"),
                 rs.getString("name"),
-                rs.getString("image_url"),
+               rs.getBytes("image_data"),
                 rs.getDouble("price"),
                 rs.getString("brand_name"),
                 rs.getString("description") // ✅ Lấy mô tả sản phẩm
@@ -218,7 +291,7 @@ public List<Product> searchByName(String txtSearch) {
     // Lọc sản phẩm theo thương hiệu
     public List<Product> getProductsByBrand(String brandName) {
     List<Product> products = new ArrayList<>();
-    String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price " +
                    "FROM Products p " +
                    "JOIN ProductVariants v ON p.product_id = v.product_id " +
                    "JOIN Brands b ON p.brand_id = b.brand_id " +
@@ -233,7 +306,7 @@ public List<Product> searchByName(String txtSearch) {
                 products.add(new Product(
                     rs.getInt("product_id"),
                     rs.getString("name"),
-                    rs.getString("image_url"),
+                    rs.getBytes("image_data"),
                     rs.getDouble("price")
                 ));
             }
@@ -246,25 +319,26 @@ public List<Product> searchByName(String txtSearch) {
 
 public List<String> getSubBrandsByBrand(String brandName) {
     List<String> subBrands = new ArrayList<>();
-    String query = "SELECT sb.name FROM SubBrands sb " +
-                   "JOIN Brands b ON sb.brand_id = b.brand_id " +
-                   "WHERE b.name = ?";
+    String query = "SELECT name FROM SubBrands WHERE brand_id = (SELECT brand_id FROM Brands WHERE name = ?)";
 
     try (Connection conn = new DBContext().getConnection();
          PreparedStatement ps = conn.prepareStatement(query)) {
         ps.setString(1, brandName);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            subBrands.add(rs.getString("name"));
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                subBrands.add(rs.getString("name"));
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
     }
     return subBrands;
 }
+
+
 public List<Product> getProductsBySubBrand(String subBrandName) {
     List<Product> list = new ArrayList<>();
-    String query = "SELECT p.product_id, p.name, p.image_url, v.price " +
+    String query = "SELECT p.product_id, p.name, p.image_data, v.price " +
                    "FROM Products p " +
                    "LEFT JOIN ProductVariants v ON p.product_id = v.product_id " +
                    "LEFT JOIN SubBrands sb ON p.subbrand_id = sb.subbrand_id " +
@@ -278,7 +352,7 @@ public List<Product> getProductsBySubBrand(String subBrandName) {
             list.add(new Product(
                 rs.getInt("product_id"),
                 rs.getString("name"),
-                rs.getString("image_url"),
+                rs.getBytes("image_data"),
                 rs.getDouble("price")
             ));
         }
@@ -288,13 +362,28 @@ public List<Product> getProductsBySubBrand(String subBrandName) {
     return list;
 }
 
+public List<String> getSubBrandsOfLenovo() {
+    List<String> subBrands = new ArrayList<>();
+    String query = "SELECT name FROM SubBrands WHERE brand_id = (SELECT brand_id FROM Brands WHERE name = 'Lenovo')";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            subBrands.add(rs.getString("name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return subBrands;
+}
 
 
     // Phân trang sản phẩm theo thương hiệu
     public List<Product> getProductsByBrandWithPagination(String brand, int page, int pageSize) {
         List<Product> list = new ArrayList<>();
         String query = "SELECT * FROM ( " +
-                       "   SELECT p.product_id, p.name, p.image_url, v.price, " +
+                       "   SELECT p.product_id, p.name, p.image_data, v.price, " +
                        "          ROW_NUMBER() OVER (ORDER BY p.product_id) AS row_num " +
                        "   FROM Products p " +
                        "   JOIN ProductVariants v ON p.product_id = v.product_id " +
@@ -315,7 +404,7 @@ public List<Product> getProductsBySubBrand(String subBrandName) {
                     list.add(new Product(
                         rs.getInt("product_id"),
                         rs.getString("name"),
-                        rs.getString("image_url"),
+                        rs.getBytes("image_data"),
                         rs.getDouble("price"),
                         brand
                     ));
@@ -352,36 +441,37 @@ public List<Product> getProductsBySubBrand(String subBrandName) {
     // Lấy chi tiết sản phẩm theo ID
   
  public Product getProductInfo(int productId) {
-        String query = "SELECT p.product_id, p.name AS product_name, p.image_url, p.description, " +
-                       "v.price, b.name AS brand_name, c.name AS category_name, p.catalog_id " +
-                       "FROM Products p " +
-                       "LEFT JOIN ProductVariants v ON p.product_id = v.product_id " +
-                       "LEFT JOIN Brands b ON p.brand_id = b.brand_id " +
-                       "LEFT JOIN Categories c ON p.category_id = c.category_id " +
-                       "WHERE p.product_id = ?";
+    String query = "SELECT p.product_id, p.name AS product_name, p.image_data, p.description, " +
+                   "v.price, b.name AS brand_name, c.name AS category_name, p.catalog_id " +
+                   "FROM Products p " +
+                   "LEFT JOIN ProductVariants v ON p.product_id = v.product_id " +
+                   "LEFT JOIN Brands b ON p.brand_id = b.brand_id " +
+                   "LEFT JOIN Categories c ON p.category_id = c.category_id " +
+                   "WHERE p.product_id = ?";
 
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, productId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new Product(
-                        rs.getInt("product_id"),
-                        rs.getString("product_name"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        rs.getDouble("price"),
-                        rs.getString("brand_name"),
-                        rs.getString("category_name"),
-                        rs.getInt("catalog_id")
-                    );
-                }
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, productId);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Product(
+                    rs.getInt("product_id"),
+                    rs.getString("product_name"),
+                    rs.getBytes("image_data"),  // ✅ Đọc dữ liệu ảnh dạng `byte[]`
+                    rs.getString("description"),
+                    rs.getDouble("price"),
+                    rs.getString("brand_name"),
+                    rs.getString("category_name"),
+                    rs.getInt("catalog_id")
+                );
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return null;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return null;
+}
+
 
     // Lấy thông số kỹ thuật của sản phẩm theo `catalog_id`
     public void getProductSpecifications(Product product) {
@@ -436,5 +526,3 @@ public List<Product> getProductsBySubBrand(String subBrandName) {
     }
     
 }
-
-

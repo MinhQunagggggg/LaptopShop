@@ -14,12 +14,14 @@ import java.util.List;
  */
 
 public class CommentDAO {
-     public List<Comment> getProductComments(int productId) {
-        String query = "SELECT u.name AS username, COALESCE(u.avatar_url, 'default-avatar.png') AS avatar_url, " +
-                       "c.comment_text AS content, c.created_at " +
+   // 🔹 Lấy danh sách bình luận cha (không có parent_comment_id)
+    public List<Comment> getParentComments(int productId) {
+        String query = "SELECT c.comment_id, c.user_id, c.product_id, u.name AS username, " +
+                       "COALESCE(u.avatar_url, 'default-avatar.png') AS avatar_url, " +
+                       "c.content, c.created_at " +
                        "FROM Comments c " +
                        "JOIN Users u ON c.user_id = u.user_id " +
-                       "WHERE c.product_id = ? " +
+                       "WHERE c.product_id = ? AND c.parent_comment_id IS NULL AND c.is_deleted = 0 " +
                        "ORDER BY c.created_at DESC";
 
         List<Comment> comments = new ArrayList<>();
@@ -28,14 +30,16 @@ public class CommentDAO {
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Timestamp timestamp = rs.getTimestamp("created_at"); // Lấy timestamp
-                Date createdAt = (timestamp != null) ? new Date(timestamp.getTime()) : null; // Chuyển thành java.util.Date
-
                 comments.add(new Comment(
+                    rs.getInt("comment_id"),
+                    rs.getInt("user_id"),
+                    rs.getInt("product_id"),
                     rs.getString("username"),
                     rs.getString("avatar_url"),
                     rs.getString("content"),
-                    createdAt
+                    rs.getTimestamp("created_at"),
+                    null,
+                    false
                 ));
             }
         } catch (SQLException e) {
@@ -44,17 +48,82 @@ public class CommentDAO {
         return comments;
     }
 
-    public void saveComment(int userId, int productId, String commentText) {
-        String query = "INSERT INTO Comments (user_id, product_id, comment_text, created_at) VALUES (?, ?, ?, GETDATE())";
+    // 🔹 Lấy danh sách phản hồi (có parent_comment_id)
+    public List<Comment> getReplies(int productId) {
+        String query = "SELECT c.comment_id, c.user_id, c.product_id, u.name AS username, " +
+                       "COALESCE(u.avatar_url, 'default-avatar.png') AS avatar_url, " +
+                       "c.content, c.created_at, c.parent_comment_id " +
+                       "FROM Comments c " +
+                       "JOIN Users u ON c.user_id = u.user_id " +
+                       "WHERE c.product_id = ? AND c.parent_comment_id IS NOT NULL AND c.is_deleted = 0 " +
+                       "ORDER BY c.parent_comment_id, c.created_at";
 
+        List<Comment> replies = new ArrayList<>();
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                replies.add(new Comment(
+                    rs.getInt("comment_id"),
+                    rs.getInt("user_id"),
+                    rs.getInt("product_id"),
+                    rs.getString("username"),
+                    rs.getString("avatar_url"),
+                    rs.getString("content"),
+                    rs.getTimestamp("created_at"),
+                    rs.getInt("parent_comment_id"),
+                    false
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return replies;
+    }
+// 🔹 Thêm bình luận hoặc phản hồi
+    public void saveComment(int userId, int productId, Integer parentCommentId, String commentText) {
+        String query = "INSERT INTO Comments (user_id, product_id, parent_comment_id, content, created_at, is_deleted) " +
+                       "VALUES (?, ?, ?, ?, GETDATE(), 0)";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, userId);
             ps.setInt(2, productId);
-            ps.setString(3, commentText);
+            ps.setObject(3, parentCommentId); // ✅ NULL nếu là bình luận cha
+            ps.setString(4, commentText);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // 🔹 Chỉnh sửa bình luận
+    public boolean editComment(int commentId, int userId, String newContent) {
+        String query = "UPDATE Comments SET content = ?, created_at = GETDATE() WHERE comment_id = ? AND user_id = ? AND is_deleted = 0";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, newContent);
+            ps.setInt(2, commentId);
+            ps.setInt(3, userId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0; // Trả về true nếu sửa thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteComment(int commentId, int userId) {
+        String query = "UPDATE Comments SET is_deleted = 1 WHERE comment_id = ? AND user_id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, commentId);
+            ps.setInt(2, userId);
+            int rowsDeleted = ps.executeUpdate();
+            return rowsDeleted > 0; // Trả về true nếu xóa thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
