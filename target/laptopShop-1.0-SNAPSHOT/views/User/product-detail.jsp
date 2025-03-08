@@ -198,70 +198,74 @@
                         <div class="product-detail p-4 rounded shadow-sm bg-white">
                             <h2 class="product-title text-primary">${product.name}</h2>
 
-                            <p class="price text-danger fw-bold fs-4">
-                                <fmt:formatNumber value="${product.price}" pattern="#,###" /> USD
-                            </p>
 
                             <p class="product-description">${product.description}</p>
 
+                            <c:if test="${not empty ramOptions}">
 
 
-                            <!-- Hiển thị thông báo khi thêm vào giỏ hàng -->
-                            <c:if test="${not empty sessionScope.cartMessage}">
-                                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                                    ${sessionScope.cartMessage}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                                <% session.removeAttribute("cartMessage");%> <!-- Xóa thông báo sau khi hiển thị -->
+                                <!-- Chọn RAM -->
+                                <c:if test="${not empty ramOptions}">
+                                    <div class="mt-3">
+                                        <strong>RAM:</strong>
+                                        <div class="d-flex gap-2">
+                                            <c:forEach var="variant" items="${ramOptions}">
+                                                <button type="button" class="btn btn-outline-primary ram-option"
+                                                        data-variant-id="${variant.variantId}"
+                                                        data-ram="${variant.ram}"
+                                                        data-price="${variant.price}"
+                                                        onclick="selectRam('${variant.variantId}', '${variant.ram}', ${variant.price})">
+                                                    ${variant.ram}
+                                                </button>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </c:if>
+
+                                <!-- Hiển thị giá sản phẩm -->
+                                <p class="price text-danger fw-bold fs-4" id="priceDisplay">
+                                    <fmt:formatNumber value="${ramOptions[0].price}" pattern="#,###" /> USD
+                                </p>
+
+                                <!-- Form thêm vào giỏ hàng -->
+                                <form action="AddToCart" method="POST" class="add-to-cart-form">
+                                    <input type="hidden" id="selectedVariantId" name="variantId" value="${ramOptions[0].variantId}">
+                                    <input type="hidden" id="selectedRam" name="ram" value="${ramOptions[0].ram}">
+
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="changeQuantity(-1)">
+                                            <i class="bi bi-dash-lg"></i>
+                                        </button>
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control text-center mx-2 quantity-input">
+                                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="changeQuantity(1)">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success ms-3 add-to-cart-btn">
+                                            🛒 Thêm vào giỏ hàng
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <script>
+                                    function selectRam(variantId, ram, price) {
+                                        document.getElementById("selectedVariantId").value = variantId;
+                                        document.getElementById("selectedRam").value = ram;
+                                        document.getElementById("priceDisplay").innerHTML = new Intl.NumberFormat().format(price) + " USD";
+                                    }
+
+                                    function changeQuantity(value) {
+                                        let quantityInput = document.getElementById("quantity");
+                                        let currentValue = parseInt(quantityInput.value);
+                                        if (currentValue + value >= 1) {
+                                            quantityInput.value = currentValue + value;
+                                        }
+                                    }
+                                </script>
+
+
                             </c:if>
 
-                            <!-- Form thêm vào giỏ hàng -->
-                            <form action="AddToCart" method="POST" class="add-to-cart-form">
-                                <input type="hidden" name="variantId" value="${product.id}">
 
-                                <div class="d-flex align-items-center">
-                                    <!-- 🔹 Nút giảm số lượng -->
-                                    <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="changeQuantity(-1)">
-                                        <i class="bi bi-dash-lg"></i>
-                                    </button>
-
-                                    <!-- 🔹 Ô nhập số lượng -->
-                                    <input type="number" name="quantity" id="quantity" value="1" min="1" 
-                                           class="form-control text-center mx-2 quantity-input">
-
-                                    <!-- 🔹 Nút tăng số lượng -->
-                                    <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="changeQuantity(1)">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-
-                                    <!-- 🔹 Nút thêm vào giỏ hàng -->
-                                    <button type="submit" class="btn btn-success ms-3 add-to-cart-btn">
-                                        🛒 Thêm vào giỏ hàng
-                                    </button>
-                                    <!-- ✅ Hiển thị thông báo khi thêm vào giỏ hàng thành công -->
-<c:if test="${not empty sessionScope.cartMessage}">
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        ${sessionScope.cartMessage}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <% session.removeAttribute("cartMessage"); %> <!-- Xóa thông báo sau khi hiển thị -->
-</c:if>
-
-
-                                </div>
-                            </form>
-
-                            <script>
-                                function changeQuantity(value) {
-                                    let quantityInput = document.getElementById("quantity");
-                                    let currentValue = parseInt(quantityInput.value);
-
-                                    // Kiểm tra nếu giá trị hợp lệ
-                                    if (currentValue + value >= 1) {
-                                        quantityInput.value = currentValue + value;
-                                    }
-                                }
-                            </script>
 
 
                         </div>
@@ -323,6 +327,131 @@
         </c:if>
     </div>
 
+    <style>
+        /* ✅ Giao diện chung */
+        .comment-box {
+            margin-bottom: 20px;
+        }
+
+        .comment-box textarea {
+            width: 100%;
+            min-height: 140px;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            font-size: 15px;
+        }
+
+        .list-group-item {
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #f9f9f9;
+            padding: 18px;
+        }
+
+        /* ✅ Định dạng tiêu đề bình luận */
+        .comment-header {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* ✅ Định dạng nội dung bình luận */
+        .list-group-item p {
+            margin-top: 8px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* ✅ Định dạng nút */
+        .btn-sm {
+            margin-right: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        .btn-sm.btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-sm.btn-warning {
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+        }
+
+        .btn-sm.btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        /* ✅ Định dạng form sửa bình luận */
+        .edit-form {
+            display: none;
+            margin-top: 12px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        .edit-form textarea {
+            width: 100%;
+            min-height: 160px;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            font-size: 15px;
+        }
+
+        /* ✅ Giao diện phản hồi */
+        .reply-list {
+            list-style: none;
+            padding-left: 40px;
+            margin-top: 12px;
+        }
+
+        .reply-item {
+            background: #f1f1f1;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        /* ✅ Định dạng form trả lời */
+        .reply-form {
+            display: none;
+            margin-top: 12px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            min-height: 160px;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            font-size: 15px;
+        }
+
+        /* ✅ Hiệu ứng hover */
+        .list-group-item:hover {
+            background: #f0f8ff;
+        }
+
+        .reply-item:hover {
+            background: #e3f2fd;
+        }
+    </style>
 
 
     <div class="container mt-4">
@@ -351,19 +480,13 @@
                         <strong>${comment.username}</strong>
                         <span class="text-muted">• <fmt:formatDate value="${comment.createdAt}" pattern="HH:mm dd/MM/yyyy"/></span>
                     </div>
-                    <p>${comment.content}</p>
+                    <p id="comment-content-${comment.commentId}">${comment.content}</p>
 
-                    <!-- Nếu user đang đăng nhập là chủ sở hữu bình luận, hiển thị nút Sửa và Xóa -->
-                    <c:if test="${not empty sessionScope.user && sessionScope.user.id == comment.userId}">
-                        <button class="btn btn-sm btn-warning" onclick="showEditForm(${comment.commentId})">Sửa</button>
-                        <form action="${pageContext.request.contextPath}/DeleteComment" method="POST" class="d-inline">
-                            <input type="hidden" name="commentId" value="${comment.commentId}">
-                            <input type="hidden" name="productId" value="${product.id}">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa bình luận này?')">Xóa</button>
-                        </form>
-                    </c:if>
+                    <!-- ✅ Nút Trả lời -->
+                    <button class="btn btn-sm btn-secondary" onclick="showReplyForm(${comment.commentId})">Trả lời</button>
 
-                    <div id="editForm-${comment.commentId}" style="display:none;">
+                    <!-- ✅ Form Sửa bình luận -->
+                    <div id="editForm-${comment.commentId}" class="edit-form">
                         <form action="${pageContext.request.contextPath}/EditComment" method="POST">
                             <input type="hidden" name="commentId" value="${comment.commentId}">
                             <input type="hidden" name="productId" value="${product.id}">
@@ -373,6 +496,52 @@
                         </form>
                     </div>
 
+
+                    <!-- ✅ Form Sửa bình luận -->
+                    <div id="editForm-${comment.commentId}" class="edit-form">
+                        <form action="${pageContext.request.contextPath}/EditComment" method="POST">
+                            <input type="hidden" name="commentId" value="${comment.commentId}">
+                            <input type="hidden" name="productId" value="${product.id}">
+                            <textarea name="newContent">${comment.content}</textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideEditForm(${comment.commentId})">Hủy</button>
+                        </form>
+                    </div>
+
+                    <!-- ✅ Nút Sửa/Xóa nếu là chủ sở hữu -->
+                    <c:if test="${not empty sessionScope.user && sessionScope.user.id == comment.userId}">
+                        <button class="btn btn-sm btn-warning" onclick="showEditForm(${comment.commentId})">Sửa</button>
+                        <form action="${pageContext.request.contextPath}/DeleteComment" method="POST" class="d-inline">
+                            <input type="hidden" name="commentId" value="${comment.commentId}">
+                            <input type="hidden" name="productId" value="${product.id}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa bình luận này?')">Xóa</button>
+                        </form>
+                    </c:if>
+
+                    <!-- ✅ Form Sửa bình luận -->
+                    <div id="editForm-${comment.commentId}" class="edit-form">
+                        <form action="${pageContext.request.contextPath}/EditComment" method="POST">
+                            <input type="hidden" name="commentId" value="${comment.commentId}">
+                            <input type="hidden" name="productId" value="${product.id}">
+                            <textarea name="newContent">${comment.content}</textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideEditForm(${comment.commentId})">Hủy</button>
+                        </form>
+                    </div>
+
+                    <!-- ✅ Form nhập phản hồi -->
+                    <div id="replyForm-${comment.commentId}" class="reply-form">
+                        <form action="${pageContext.request.contextPath}/AddComment" method="POST">
+                            <input type="hidden" name="productId" value="${product.id}">
+                            <input type="hidden" name="parentCommentId" value="${comment.commentId}">
+                            <textarea name="commentText" placeholder="Viết phản hồi..." required></textarea>
+                            <button type="submit" class="btn btn-success btn-sm">Gửi</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="hideReplyForm(${comment.commentId})">Hủy</button>
+                        </form>
+                    </div>
+
+
+                    <!-- ✅ Hiển thị danh sách phản hồi -->
                     <ul class="reply-list">
                         <c:forEach var="reply" items="${comment.replies}">
                             <li class="reply-item">
@@ -380,26 +549,69 @@
                                     <strong>${reply.username}</strong>
                                     <span class="text-muted">• <fmt:formatDate value="${reply.createdAt}" pattern="HH:mm dd/MM/yyyy"/></span>
                                 </div>
-                                <p>${reply.content}</p>
+                                <p id="reply-content-${reply.commentId}">${reply.content}</p>
 
-                                <!-- Nếu user là chủ sở hữu của phản hồi, hiển thị nút Sửa và Xóa -->
-                                <c:if test="${not empty sessionScope.user && sessionScope.user.id == reply.userId}">
-                                    <button class="btn btn-sm btn-warning" onclick="showEditForm(${reply.commentId})">Sửa</button>
-                                    <form action="${pageContext.request.contextPath}/DeleteComment" method="POST" class="d-inline">
-                                        <input type="hidden" name="commentId" value="${reply.commentId}">
-                                        <input type="hidden" name="productId" value="${product.id}">
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa bình luận này?')">Xóa</button>
-                                    </form>
-                                </c:if>
+
+
+                               <!-- ✅ Nút Sửa/Xóa nếu là chủ sở hữu -->
+<c:if test="${not empty sessionScope.user && sessionScope.user.id == reply.userId}">
+    <button class="btn btn-sm btn-warning" onclick="showEditForm(${reply.commentId})">Sửa</button>
+    <form action="${pageContext.request.contextPath}/DeleteComment" method="POST" class="d-inline">
+        <input type="hidden" name="commentId" value="${reply.commentId}">
+        <input type="hidden" name="productId" value="${product.id}">
+        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa bình luận này?')">Xóa</button>
+    </form>
+</c:if>
+
+<!-- ✅ Form Sửa phản hồi -->
+<div id="editForm-${reply.commentId}" class="edit-form" style="display: none;">
+    <form action="${pageContext.request.contextPath}/EditComment" method="POST">
+        <input type="hidden" name="commentId" value="${reply.commentId}">
+        <input type="hidden" name="productId" value="${product.id}">
+        <textarea name="newContent">${reply.content}</textarea>
+        <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="hideEditForm(${reply.commentId})">Hủy</button>
+    </form>
+</div>
+
+
                             </li>
                         </c:forEach>
                     </ul>
                 </li>
             </c:forEach>
         </ul>
+
     </div>
 
+
     <script>
+        function showReplyForm(commentId) {
+            let form = document.getElementById("replyForm-" + commentId);
+            if (form) {
+                form.style.display = "block";
+            } else {
+                console.log("❌ Không tìm thấy form trả lời với ID: replyForm-" + commentId);
+            }
+        }
+
+        function hideReplyForm(commentId) {
+            let form = document.getElementById("replyForm-" + commentId);
+            if (form) {
+                form.style.display = "none";
+            }
+        }
+        function showEditForm(commentId) {
+            document.getElementById("editForm-" + commentId).style.display = "block";
+            document.getElementById("reply-content-" + commentId).style.display = "none";
+        }
+
+        function hideEditForm(commentId) {
+            document.getElementById("editForm-" + commentId).style.display = "none";
+            document.getElementById("reply-content-" + commentId).style.display = "block";
+        }
+
+
         function showEditForm(commentId) {
             document.getElementById("editForm-" + commentId).style.display = "block";
         }
@@ -416,14 +628,14 @@
                 quantityInput.value = currentValue + value;
             }
         }
- document.addEventListener("DOMContentLoaded", function() {
-        var cartAlert = document.querySelector(".alert-success");
-        if (cartAlert) {
-            setTimeout(function() {
-                cartAlert.style.display = "none";
-            }, 3000);
-        }
-    });
+        document.addEventListener("DOMContentLoaded", function () {
+            var cartAlert = document.querySelector(".alert-success");
+            if (cartAlert) {
+                setTimeout(function () {
+                    cartAlert.style.display = "none";
+                }, 3000);
+            }
+        });
     </script>
 
 

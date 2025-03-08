@@ -14,11 +14,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.ProductVariant;
 import model.User;
 
 /**
  *
- * @author CE182250
+ * @author CE182250 
  */
 @WebServlet(name = "AddToCartServlet", urlPatterns = {"/AddToCart"})
 public class AddToCartServlet extends HttpServlet {
@@ -29,30 +30,33 @@ public class AddToCartServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
+            System.out.println("❌ User chưa đăng nhập.");
             response.sendRedirect("Login");
             return;
         }
 
         int userId = user.getId();
         int variantId = Integer.parseInt(request.getParameter("variantId"));
+        String ram = request.getParameter("ram"); // 🔹 Lấy RAM từ form
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
         CartDAO cartDAO = new CartDAO();
-        cartDAO.addToCart(userId, variantId, quantity);
+        ProductVariant variant = cartDAO.getVariantById(variantId);
 
-        // ✅ Cập nhật số lượng trong giỏ hàng
+        if (variant == null) {
+            System.out.println("❌ Không tìm thấy sản phẩm.");
+            response.sendRedirect("ProductDetail?id=" + variantId);
+            return;
+        }
+
+        System.out.println("🛒 Thêm vào giỏ hàng: Variant ID = " + variantId + ", RAM = " + ram + ", Price = " + variant.getPrice());
+
+        cartDAO.addToCart(userId, variantId, ram, variant.getPrice(), quantity); // 🔹 Gọi đúng phương thức mới
+
         int cartSize = cartDAO.getCartSize(userId);
         session.setAttribute("cartSize", cartSize);
 
-        // ✅ **Lưu thông báo vào session**
-        session.setAttribute("cartMessage", "🛒 Sản phẩm đã được thêm vào giỏ hàng!");
-
-        // ✅ **Chuyển hướng trở lại trang sản phẩm**
-        response.sendRedirect("ProductDetail?id=" + variantId);
+        response.sendRedirect("Cart");
     }
 }
-
-
-
-
 

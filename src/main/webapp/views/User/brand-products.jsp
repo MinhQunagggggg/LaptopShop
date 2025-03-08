@@ -124,7 +124,7 @@
     </div>
 
     <c:if test="${empty products}">
-        <p class="text-center text-muted">Không tìm thấy sản phẩm.</p>
+        <p class="text-center text-muted">No products</p>
     </c:if>
 </div>
 

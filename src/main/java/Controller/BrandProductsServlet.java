@@ -36,16 +36,12 @@ public class BrandProductsServlet extends HttpServlet {
 
         ProductDAO productDAO = new ProductDAO();
         List<Product> products;
+if (subBrandName != null && !subBrandName.trim().isEmpty()) {
+    products = productDAO.getProductsBySubBrand(subBrandName);
+} else {
+    products = productDAO.getProductsByBrand(brandName);
+}
 
-        if (subBrandName != null && !subBrandName.trim().isEmpty()) {
-            // ✅ Nếu có SubBrand, lấy sản phẩm theo SubBrand
-            products = productDAO.getProductsBySubBrand(subBrandName);
-            request.setAttribute("pageTitle", "All Products of " + subBrandName);
-        } else {
-            // ✅ Nếu chỉ có Brand, lấy sản phẩm theo Brand
-            products = productDAO.getProductsByBrand(brandName);
-            request.setAttribute("pageTitle", "All Products of " + brandName);
-        }
 
         // 🔹 Nếu brand là Lenovo, lấy danh sách SubBrands
         List<String> subBrandsOfLenovo = productDAO.getSubBrandsByBrand("Lenovo");

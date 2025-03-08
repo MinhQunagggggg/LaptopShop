@@ -24,52 +24,64 @@ import model.User;
  *
  * @author CE182250
  */
+
 @WebServlet(name = "CheckoutServlet", urlPatterns = {"/Checkout"})
 public class CheckoutServlet extends HttpServlet {
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        throws ServletException, IOException {
+    HttpSession session = request.getSession();
+    User user = (User) session.getAttribute("user");
 
-        if (user == null) {
-            response.sendRedirect("Login");
-            return;
-        }
+    if (user == null) {
+        response.sendRedirect("Login");
+        return;
+    }
 
-        CartDAO cartDAO = new CartDAO();
+    String[] selectedItems = request.getParameterValues("selectedItems");
+    if (selectedItems == null || selectedItems.length == 0) {
+        response.sendRedirect("Cart?error=No items selected");
+        return;
+    }
 
-        // ✅ Lấy danh sách sản phẩm được chọn từ form
-        String[] selectedItems = request.getParameterValues("selectedItems");
+    CartDAO cartDAO = new CartDAO();
+    List<CartItem> checkoutItems = new ArrayList<>();
+    double totalAmount = 0;
 
-        if (selectedItems == null || selectedItems.length == 0) {
-            response.sendRedirect("Cart?error=Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
-            return;
-        }
+    for (String itemId : selectedItems) {
+        int variantId = Integer.parseInt(itemId);
+        int stock = cartDAO.getStockForVariant(variantId); // ✅ Kiểm tra số lượng tồn kho
 
-        // ✅ Lấy toàn bộ giỏ hàng của người dùng từ DAO
-        List<CartItem> allCartItems = cartDAO.getCartItems(user.getId());
+        for (CartItem item : cartDAO.getCartItems(user.getId())) {
+            if (item.getVariantId() == variantId) {
+                String quantityParam = request.getParameter("quantity_" + variantId);
+                if (quantityParam != null) {
+                    int updatedQuantity = Integer.parseInt(quantityParam);
+                    
+                    if (stock == 0) {
+                        session.setAttribute("cartError", "❌ Sản phẩm '" + item.getProductName() + "' đã hết hàng!");
+                        response.sendRedirect("Cart");
+                        return;
+                    }
+                    
+                    if (updatedQuantity > stock) {
+                        session.setAttribute("cartError", "❌ Sản phẩm '" + item.getProductName() + "' chỉ còn " + stock + " sản phẩm!");
+                        response.sendRedirect("Cart");
+                        return;
+                    }
 
-        // ✅ Lọc ra những sản phẩm được chọn để thanh toán
-        List<CartItem> checkoutItems = new ArrayList<>();
-        double totalAmount = 0;
-
-        for (String selectedVariantId : selectedItems) {
-            int variantId = Integer.parseInt(selectedVariantId);
-
-            for (CartItem item : allCartItems) {
-                if (item.getVariantId() == variantId) {
-                    checkoutItems.add(item);
-                    totalAmount += item.getTotalPrice();
-                    break;
+                    item.setQuantity(updatedQuantity);
+                    item.setTotalPrice(updatedQuantity * item.getPrice());
                 }
+                checkoutItems.add(item);
+                totalAmount += item.getTotalPrice();
+                break;
             }
         }
-
-        // ✅ Lưu danh sách sản phẩm cần thanh toán vào session
-        session.setAttribute("checkoutItems", checkoutItems);
-        session.setAttribute("totalAmount", totalAmount);
-
-        response.sendRedirect("checkout.jsp");
     }
+
+    session.setAttribute("checkoutItems", checkoutItems);
+    session.setAttribute("totalAmount", totalAmount);
+    request.getRequestDispatcher("/views/User/checkout.jsp").forward(request, response);
+}
+
 }

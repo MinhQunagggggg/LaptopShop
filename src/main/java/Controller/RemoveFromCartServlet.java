@@ -37,7 +37,7 @@ public class RemoveFromCartServlet extends HttpServlet {
         int variantId = Integer.parseInt(request.getParameter("variantId"));
 
         CartDAO cartDAO = new CartDAO();
-        
+        String productName = cartDAO.getProductNameByVariantId(variantId); // 🔥 Lấy tên sản phẩm trước khi xóa
         // ✅ Xóa sản phẩm khỏi giỏ hàng
         cartDAO.removeFromCart(userId, variantId);
 

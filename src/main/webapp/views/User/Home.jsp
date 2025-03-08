@@ -1,5 +1,5 @@
 <%-- 
-    Document   : product-detail
+    Document   : Home
     Created on : Feb 12, 2025, 10:27:24 PM
     Author     : CE182250
 --%>
@@ -162,6 +162,7 @@
 
     <body>
         <jsp:include page="menu.jsp" />
+        
 
         <c:if test="${empty searchQuery}"> 
             <!-- Categories Filter - Hi?n th? 3 nút ngang hàng -->

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.Comment;
+import model.ProductVariant;
 import model.User;
 
 /**
@@ -59,6 +60,11 @@ public class ProductDetailServlet extends HttpServlet {
 
         // 🔹 Lấy danh sách phản hồi
         List<Comment> replies = commentDAO.getReplies(productId);
+        
+        List<ProductVariant> ramOptions = productDAO.getRamOptionsByProductId(productId);
+request.setAttribute("ramOptions", ramOptions);
+
+
 
         // 🔹 Gán các phản hồi vào bình luận cha
         for (Comment parent : parentComments) {
