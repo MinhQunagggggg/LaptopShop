@@ -19,31 +19,32 @@ public class RegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String username = request.getParameter("username");
+        String address = request.getParameter("address");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("remake_password");
 
         // Kiểm tra lỗi nhập liệu
-        if (name == null || name.isEmpty() || 
-            email == null || email.isEmpty() || 
-            phone == null || phone.isEmpty() || 
-            username == null || username.isEmpty() || 
-            password == null || password.isEmpty() || 
-            confirmPassword == null || confirmPassword.isEmpty()) {
-            
+        if (name == null || name.isEmpty()
+                || email == null || email.isEmpty()
+                || phone == null || phone.isEmpty()
+                || username == null || username.isEmpty()
+                || password == null || password.isEmpty()
+                || confirmPassword == null || confirmPassword.isEmpty()) {
+
             request.setAttribute("errorMessage", "All fields are required!");
-            sendBackToRegister(request, response, name, email, phone, username);
+            sendBackToRegister(request, response, name, email, phone, username, address);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("errorMessage", "Passwords do not match!");
-            sendBackToRegister(request, response, name, email, phone, username);
+            sendBackToRegister(request, response, name, email, phone, username, address);
             return;
         }
 
         if (!phone.matches("\\d{10}")) {
             request.setAttribute("errorMessage", "Phone number must be 10 digits.");
-            sendBackToRegister(request, response, name, email, phone, username);
+            sendBackToRegister(request, response, name, email, phone, username, address);
             return;
         }
 
@@ -51,29 +52,30 @@ public class RegisterServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
         if (userDAO.isUserExists(username, email)) {
             request.setAttribute("errorMessage", "Username or Email already exists!");
-            sendBackToRegister(request, response, name, email, phone, username);
+            sendBackToRegister(request, response, name, email, phone, username, address);
             return;
         }
 
         // Đăng ký tài khoản
-        boolean success = userDAO.registerUser(name, email, phone, username, password);
+        boolean success = userDAO.registerUser(name, email, phone, username, password, address);
 
         if (success) {
-            response.sendRedirect("views/User/login.jsp?registerSuccess=true");
+            response.sendRedirect("/Login");
         } else {
             request.setAttribute("errorMessage", "Registration failed! Please try again.");
-            sendBackToRegister(request, response, name, email, phone, username);
+            sendBackToRegister(request, response, name, email, phone, username, address);
         }
     }
 
     // Trả về `register.jsp` và giữ lại dữ liệu đã nhập
-    private void sendBackToRegister(HttpServletRequest request, HttpServletResponse response, 
-                                    String name, String email, String phone, String username)
+    private void sendBackToRegister(HttpServletRequest request, HttpServletResponse response,
+            String name, String email, String phone, String username, String address)
             throws ServletException, IOException {
         request.setAttribute("name", name);
         request.setAttribute("email", email);
         request.setAttribute("phone", phone);
         request.setAttribute("username", username);
+        request.setAttribute("address", address);
         request.getRequestDispatcher("views/User/register.jsp").forward(request, response);
     }
 }

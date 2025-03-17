@@ -5,8 +5,7 @@
 package Controller;
 
 import DAO.UserDAO;
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
-import jakarta.servlet.RequestDispatcher;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -52,12 +51,6 @@ public class ViewProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-
-        if (user == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
         // Fetch latest user info from the database
         UserDAO userDAO = new UserDAO();
         User updatedUser = userDAO.getUserById(user.getId());
@@ -65,7 +58,6 @@ public class ViewProfileServlet extends HttpServlet {
         if (updatedUser != null) {
             session.setAttribute("user", updatedUser);
         }
-
         request.getRequestDispatcher("views/User/view-profile.jsp").forward(request, response);
     }
 

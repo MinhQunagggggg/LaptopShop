@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.Comment;
+import model.ProductVariant;
 import model.User;
 
 /**
@@ -23,7 +24,8 @@ import model.User;
  */
 @WebServlet(name = "ProductDetailServlet", urlPatterns = {"/ProductDetail"})
 public class ProductDetailServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String productIdParam = request.getParameter("id");
 
@@ -60,6 +62,9 @@ public class ProductDetailServlet extends HttpServlet {
         // 🔹 Lấy danh sách phản hồi
         List<Comment> replies = commentDAO.getReplies(productId);
 
+        List<ProductVariant> ramOptions = productDAO.getRamOptionsByProductId(productId);
+        request.setAttribute("ramOptions", ramOptions);
+
         // 🔹 Gán các phản hồi vào bình luận cha
         for (Comment parent : parentComments) {
             List<Comment> childReplies = new ArrayList<>();
@@ -87,7 +92,6 @@ public class ProductDetailServlet extends HttpServlet {
         request.setAttribute("parentComments", parentComments);
         request.setAttribute("userRated", userRated);
         request.setAttribute("userRating", userRating);
-
         request.getRequestDispatcher("views/User/product-detail.jsp").forward(request, response);
     }
 }

@@ -7,7 +7,6 @@ package Controller;
 import model.Product;
 import DAO.ProductDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,6 +22,7 @@ import java.util.List;
 @WebServlet(name="HomeServlet", urlPatterns={"/Home"})
 public class HomeServlet extends HttpServlet {
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         ProductDAO productDAO = new ProductDAO();

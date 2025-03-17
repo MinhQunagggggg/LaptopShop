@@ -14,20 +14,30 @@ public class User {
     private String name;
     private String username;
     private String email;
-    private String phone;
+    private String phone , address;
     private String password;
-    private String Avatar_url;
+    private byte[] avatarData;
+    private int role_id;
+    
 
     public User() {
     }
 
-    // Constructor đầy đủ
-    public User(int id, String name, String username, String email, String phone) {
+    public User(int id, String name, String username, String email, String phone, byte[] avatarData, String address) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.email = email;
         this.phone = phone;
+        this.avatarData = avatarData;
+        this.address = address;
+    }
+
+    public User(int id, String name, int role_id ,byte[] avatarData) {
+        this.id = id;
+        this.name = name;
+        this.role_id = role_id;     
+        this.avatarData = avatarData;
     }
 
     public User(int id, String username, String email, String password) {
@@ -37,14 +47,25 @@ public class User {
         this.password = password;
     }
 
-    public User(int user_id, String name) {
-        this.id = user_id;
-        this.name = name;
-    }
-
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public byte[] getAvatarData() {
+        return avatarData;
+    }
+
+    public void setAvatarData(byte[] avatarData) {
+        this.avatarData = avatarData;
     }
 
     // Getter & Setter
@@ -95,4 +116,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public int getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(int role_id) {
+        this.role_id = role_id;
+    }
+
 }

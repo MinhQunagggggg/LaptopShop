@@ -34,7 +34,7 @@ public class UserDAO {
 
     // Lấy thông tin người dùng theo ID
     public User getUserById(int userId) {
-        String query = "SELECT user_id, name, username, email, phone FROM Users WHERE user_id = ?";
+        String query = "SELECT user_id, name, username, email, phone ,shipping_address , avatar_data FROM Users WHERE user_id = ?";
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setInt(1, userId);
@@ -45,7 +45,9 @@ public class UserDAO {
                             rs.getString("name"),
                             rs.getString("username"),
                             rs.getString("email"),
-                            rs.getString("phone")
+                            rs.getString("phone"),
+                            rs.getBytes("avatar_data"),
+                            rs.getString("shipping_address")
                     );
                 }
             }
@@ -57,13 +59,14 @@ public class UserDAO {
 
     // Cập nhật thông tin người dùng
     public boolean updateUserProfile(User user) {
-        String query = "UPDATE Users SET name = ?, email = ?, phone = ? WHERE user_id = ?";
+        String query = "UPDATE Users SET name = ?, email = ?, phone = ?, shipping_address = ? WHERE user_id = ?";
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, user.getName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPhone());
-            ps.setInt(4, user.getId());
+            ps.setString(4, user.getAddress());
+            ps.setInt(5, user.getId());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -87,7 +90,7 @@ public class UserDAO {
     }
 
     public User getUser(String username, String password) {
-        String query = "SELECT user_id,name, password FROM Users WHERE username = ?";
+        String query = "SELECT user_id,name,role_id, password ,avatar_data FROM Users WHERE username = ?";
 
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -99,7 +102,7 @@ public class UserDAO {
                 String hashedInputPassword = hashMD5(password).trim();
 
                 if (storedPassword.equals(hashedInputPassword)) {
-                    return new User(rs.getInt("user_id"), rs.getString("name"));
+                    return new User(rs.getInt("user_id"), rs.getString("name"), rs.getInt("role_id"), rs.getBytes("avatar_data"));
                 }
             }
         } catch (SQLException e) {
@@ -144,12 +147,12 @@ public class UserDAO {
     }
 
     // Thêm người dùng mới vào database
-    public boolean registerUser(String name, String email, String phone, String username, String password) {
+    public boolean registerUser(String name, String email, String phone, String username, String password, String address) {
         if (isUserExists(username, email)) {
             return false; // Không cho phép đăng ký nếu đã tồn tại
         }
 
-        String query = "INSERT INTO Users (name, email, phone, username, password, role_id) VALUES (?, ?, ?, ?, ?, 1)";
+        String query = "INSERT INTO Users (name, email, phone, username, shipping_address,password, role_id) VALUES (?, ?, ?, ?, ?, ?, 1)";
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
             String Pass = hashMD5(password); // Mã hóa mật khẩu
@@ -158,7 +161,8 @@ public class UserDAO {
             ps.setString(2, email);
             ps.setString(3, phone);
             ps.setString(4, username);
-            ps.setString(5, Pass); // Mã hóa mật khẩu
+            ps.setString(5, address);
+            ps.setString(6, Pass); // Mã hóa mật khẩu
 
             int result = ps.executeUpdate();
 
@@ -274,4 +278,49 @@ public class UserDAO {
         }
     }
 
+    public boolean updateUserPassword(int id, String newPassword) {
+        String query = "UPDATE Users SET password = ? WHERE user_id = ?";
+        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, hashMD5(newPassword));
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public boolean checkPassword(int userId, String inputPassword) {
+        String query = "SELECT password FROM Users WHERE user_id = ?";
+
+        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String storedPassword = rs.getString("password").trim();
+                String hashedInputPassword = hashMD5(inputPassword).trim();
+                return storedPassword.equals(hashedInputPassword);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateImage(int userId, byte[] imageData) {
+        String query = "UPDATE Users SET avatar_data = ? WHERE user_id = ?";
+        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setBytes(1, imageData);
+            ps.setInt(2, userId);
+
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

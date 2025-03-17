@@ -43,7 +43,6 @@ public class GoogleloginDAO {
         JsonObject jobj = new Gson().fromJson(response, JsonObject.class);
 
         String accessToken = jobj.get("access_token").toString().replaceAll("\"", "");
-
         return accessToken;
 
     }
@@ -90,49 +89,10 @@ public class GoogleloginDAO {
         return null;
     }
 
-    // Cập nhật email_id nếu chưa có
-    public void updateEmailId(int userId, String googleId) {
-        String query = "UPDATE Users SET email_id = ? WHERE user_id = ?";
-        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, googleId); // Đặt Google ID vào email_id
-            ps.setInt(2, userId); // Xác định user_id
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Đăng ký tài khoản mới khi email chưa tồn tại
-    public User registerUser(GoogleAccount googleAccount) {
-        String query = "INSERT INTO Users (name, email, email_id ,role_id) VALUES (?, ?, ?, 1)";
-        try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setString(1, googleAccount.getName());
-            ps.setString(2, googleAccount.getEmail());
-            ps.setString(3, googleAccount.getId());
-
-            int affectedRows = ps.executeUpdate();
-
-            if (affectedRows > 0) {
-                String selectQuery = "SELECT user_id FROM Users WHERE email = ?";
-                try ( PreparedStatement ps2 = conn.prepareStatement(selectQuery)) {
-                    ps2.setString(1, googleAccount.getEmail());
-                    ResultSet rs2 = ps2.executeQuery();
-                    if (rs2.next()) {
-                        int userId = rs2.getInt("user_id");
-                        return new User(userId, googleAccount.getName());
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
+ 
 
     public User getUserById(int userId) {
-        String query = "SELECT user_id, username, name FROM Users WHERE user_id = ?";
+        String query = "SELECT user_id, name, role_id , avatar_data FROM Users WHERE user_id = ?";
 
         try ( Connection conn = new DBContext().getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -142,7 +102,9 @@ public class GoogleloginDAO {
             if (rs.next()) {
                 return new User(
                         rs.getInt("user_id"),
-                        rs.getString("name")
+                        rs.getString("name"),
+                        rs.getInt("role_id"),
+                        rs.getBytes("avatar_data")
                 );
             }
         } catch (SQLException e) {

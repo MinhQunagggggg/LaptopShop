@@ -26,40 +26,55 @@ public class GoogleloginServlet extends HttpServlet {
         }
 
         // Initialize DAO
-        GoogleloginDAO gg = new GoogleloginDAO();
+        GoogleloginDAO GoogleloginDAO = new GoogleloginDAO();
 
         // Retrieve access token from authorization code
-        String accessToken = gg.getToken(code);
+        String accessToken = GoogleloginDAO.getToken(code);
         if (accessToken == null) {
             response.getWriter().println("Failed to retrieve access token.");
             return;
         }
 
         // Fetch user account details from Google
-        GoogleAccount acc = gg.getUserInfo(accessToken);
+        GoogleAccount acc = GoogleloginDAO.getUserInfo(accessToken);
         if (acc == null) {
             response.getWriter().println("Failed to retrieve Google account information.");
             return;
         }
-
+        System.out.println(acc.getPicture());
         // Check if the email already exists in the database
-        int userId = gg.getUserIdByEmail(acc.getEmail());
+        int userId = GoogleloginDAO.getUserIdByEmail(acc.getEmail());
 
         HttpSession session = request.getSession();
         if (userId != -1) {
-            User user = gg.getUserById(userId); // Lấy thông tin user từ DB
+            User user = GoogleloginDAO.getUserById(userId);
             session.setAttribute("user", user);
-            response.sendRedirect("/Home");
-            return; // 🔹 Dừng phương thức sau khi redirect
+
+            // Xác định URL chuyển hướng
+            String redirectURL;
+            switch (user.getRole_id()) {
+                case 1:
+                    redirectURL = "/Home";
+                    break;
+                case 2:
+                    redirectURL = "/list-products";
+                    break;
+                default:
+                    redirectURL = "/Dashboard";
+                    break;
+            }
+
+            // Chuyển hướng ngay lập tức và kết thúc hàm
+            response.sendRedirect(request.getContextPath() + redirectURL);
+            return; // 💡 QUAN TRỌNG: Dừng xử lý để tránh gọi forward()
         }
 
-        // Register new user
-        User newUser = gg.registerUser(acc);
-        if (newUser != null) {
-            session.setAttribute("user", newUser);
-            response.sendRedirect("/Home");
-            return; // 🔹 Dừng phương thức sau khi redirect
-        }
+// Nếu user chưa có trong DB, chuyển đến trang đăng ký
+        request.setAttribute("email", acc.getEmail());
+        request.setAttribute("name", acc.getName());
+
+// 💡 KHÔNG GỌI sendRedirect() sau khi forward
+        request.getRequestDispatcher("views/User/register.jsp").forward(request, response);
 
         // Nếu đăng ký thất bại
         response.getWriter().println("Failed to register a new account.");

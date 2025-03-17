@@ -162,6 +162,7 @@
 
     <body>
         <jsp:include page="menu.jsp" />
+        
 
         <c:if test="${empty searchQuery}"> 
             <!-- Categories Filter - Hi?n th? 3 nút ngang hàng -->
@@ -371,5 +372,6 @@
         </div>
 
         <jsp:include page="footer.jsp" />
+        <jsp:include page="zalo-chat.jsp" />
     </body>
 </html>

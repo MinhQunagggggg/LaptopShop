@@ -1,135 +1,402 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Register Page</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TPF Shop Register</title>
 
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                height: 100vh;
-                display: flex;
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            flex-direction: column; /* Thêm để header và container xếp chồng */
+            align-items: center;
+            overflow: auto;
+        }
+
+        /* Thanh header */
+        header {
+            width: 100%;
+            background: #ffffff; /* Nền trắng cho header */
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            position: relative;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            height: 70px; /* Kích thước hợp lý cho logo */
+            width: auto;
+            transition: transform 0.3s ease; /* Hiệu ứng phóng to khi hover */
+        }
+
+        .logo:hover {
+            transform: scale(1.1); /* Phóng to nhẹ khi hover */
+        }
+
+        .header-title {
+            font-size: 24px;
+            color: #4a00e0; /* Màu chữ tím để đồng bộ với giao diện */
+            font-weight: bold;
+            margin-left: 20px;
+            display: none; /* Ẩn trên màn hình nhỏ */
+        }
+
+        .register-container {
+            display: flex;
+            width: 1400px;
+            height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            margin-top: 20px; /* Khoảng cách từ header */
+        }
+
+        .image-section {
+            width: 700px;
+            background: url('${pageContext.request.contextPath}/assets/img/login-poster.png') no-repeat center;
+            background-size: cover;
+        }
+
+        .register-form {
+            width: 700px;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .register-form h2 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .register-form h3 {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4a00e0;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .form-row .form-group {
+            width: 48%;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 18px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            width: 100%;
+        }
+
+        .btn-register {
+            background: #4a00e0;
+            border: none;
+            padding: 14px;
+            font-size: 20px;
+            border-radius: 5px;
+            color: white;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-register:hover {
+            background: #3a00b0;
+        }
+
+        .back-link,
+        .login-link a {
+            color: #4a00e0;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .login-link a:hover {
+            color: #3a00b0;
+            text-decoration: none;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 16px;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .error-message {
+            margin-bottom: 20px;
+        }
+
+        #validationErrors {
+            display: none; /* Ẩn mặc định */
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1400px) {
+            .register-container {
+                width: 90%;
+                height: auto;
                 flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                background-image: url('${pageContext.request.contextPath}/assets/img/logoimage.png');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
             }
-            .header {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                padding: 10px 20px;
-                display: flex;
-                justify-content: flex-end;
-            }
-            .header a {
-                color: white;
-                text-decoration: none;
-                font-size: 18px;
-                font-weight: bold;
-            }
-            .register-card {
-                width: 100%;
-                max-width: 500px;
-                padding: 30px;
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-                border-radius: 10px;
-                background: white;
-            }
-            .btn-register {
-                background-color: #ff6600;
-                color: white;
-                font-size: 16px;
-                padding: 10px;
-                border-radius: 6px;
-                border: none;
-                width: 100%;
-            }
-            .btn-register:hover {
-                background-color: #e65c00;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <a href="/Home" class="btn btn-outline-light">Exit</a>
-        </div>
 
-        <div class="register-card">
-            <h3 class="text-center">Register</h3>
+            .image-section,
+            .register-form {
+                width: 100%;
+            }
+
+            .image-section {
+                height: 400px;
+                background-size: cover;
+            }
+
+            .register-form {
+                padding: 40px;
+                height: auto;
+            }
+
+            .register-form h2 {
+                font-size: 30px;
+            }
+
+            .register-form h3 {
+                font-size: 26px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-row .form-group {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+            .form-control {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            .btn-register {
+                padding: 12px;
+                font-size: 18px;
+                margin-top: 15px;
+            }
+
+            .login-link {
+                margin-top: 20px;
+                font-size: 16px;
+            }
+
+            .error-message {
+                margin-bottom: 20px;
+            }
+
+            .back-link {
+                top: 10px;
+                right: 10px;
+                font-size: 14px;
+            }
+
+            header {
+                padding: 10px;
+            }
+
+            .logo {
+                height: 35px; /* Thu nhỏ logo trên màn hình nhỏ */
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                display: none;
+            }
+            .header-container {
+                justify-content: center;
+            }
+            .logo {
+                height: 30px; /* Thu nhỏ thêm trên màn hình rất nhỏ */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Thanh header -->
+    <header>
+        <div class="header-container">
+            <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" alt="TPF Shop Logo" class="logo">
+            <span class="header-title">TPF Shop</span>
+        </div>
+    </header>
+
+    <div class="register-container">
+        <a href="/Home" class="back-link">Back to Home</a>
+        <div class="image-section"></div>
+        <div class="register-form">
+            <h3>REGISTER</h3>
+
+            <!-- Thông báo lỗi từ server -->
             <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
             <% if (errorMessage != null) { %>
-            <div class="alert alert-danger text-center">
-                <%= errorMessage %>
-            </div>
+                <div class="error-message">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Registration Failed!</strong> <%= errorMessage %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
             <% } %>
 
+            <!-- Khung thông báo lỗi validation -->
+            <div id="validationErrors" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Validation Error!</strong> <span id="errorText"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
             <form action="${pageContext.request.contextPath}/Register" method="post" onsubmit="return validateForm()">
-                <div class="form-group">
-                    <label for="username">Username *</label>
-                    <input type="text" class="form-control" id="username" name="username" value="${username}" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" class="form-control" id="name" name="name" value="${name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" class="form-control" id="username" name="username" value="${username}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" value="${email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="text" class="form-control" id="phone" name="phone" value="${phone}" required>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="name">Full Name *</label>
-                    <input type="text" class="form-control" id="name" name="name" value="${name}" required>
+                    <label for="address">Address *</label>
+                    <input type="text" class="form-control" id="address" name="address" value="${address}" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="text" class="form-control" id="phone" name="phone" value="${phone}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" value="${email}" required>
-                </div>
-
                 <div class="form-group">
                     <label for="password">Password *</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-
                 <div class="form-group">
                     <label for="remake_password">Confirm Password *</label>
                     <input type="password" class="form-control" id="remake_password" name="remake_password" required>
                 </div>
-
-                <button type="submit" class="btn btn-register">REGISTER</button>
+                <button type="submit" class="btn btn-register btn-block">REGISTER</button>
             </form>
-            <div class="text-center mt-3">
-                <a href="/Login">Back to Login</a>
+
+            <div class="login-link">
+                Already have an account? <a href="/Login">Login</a>
             </div>
         </div>
+    </div>
 
-        <script>
-            function validateForm() {
-                var password = document.getElementById("password").value;
-                var remakePassword = document.getElementById("remake_password").value;
-                var phone = document.getElementById("phone").value;
-                var phoneRegex = /^[0-9]{10}$/;
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function validateForm() {
+            // Lấy giá trị từ các trường
+            var password = document.getElementById("password").value;
+            var remakePassword = document.getElementById("remake_password").value;
+            var phone = document.getElementById("phone").value;
+            var email = document.getElementById("email").value;
+            var errorDiv = document.getElementById("validationErrors");
+            var errorText = document.getElementById("errorText");
 
-                if (!phoneRegex.test(phone)) {
-                    alert("Phone number must be 10 digits.");
-                    return false;
-                }
+            // Regex kiểm tra
+            var phoneRegex = /^0[0-9]{9}$/; // Số điện thoại bắt đầu bằng 0, độ dài 10 số
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu\.vn|org|net|gov)$/; // Email chuẩn
+            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; // Mật khẩu bảo mật
 
-                if (password !== remakePassword) {
-                    alert("Passwords do not match.");
-                    return false;
-                }
+            // Reset và kiểm tra lỗi
+            errorDiv.style.display = "none"; // Ẩn khung lỗi trước khi kiểm tra
 
-                return true;
+            // Kiểm tra số điện thoại
+            if (!phoneRegex.test(phone)) {
+                errorText.innerHTML = "Phone number must start with 0 and be exactly 10 digits.";
+                errorDiv.style.display = "block";
+                return false;
             }
-        </script>
-    </body>
+
+            // Kiểm tra email
+            if (!emailRegex.test(email)) {
+                errorText.innerHTML = "Email must be in a valid format with domain .com, .edu.vn, .org, .net, or .gov.";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Kiểm tra mật khẩu
+            if (!passwordRegex.test(password)) {
+                errorText.innerHTML = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Kiểm tra xác nhận mật khẩu
+            if (password !== remakePassword) {
+                errorText.innerHTML = "Passwords do not match.";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            return true; // Nếu không có lỗi, submit form
+        }
+    </script>
+</body>
 </html>

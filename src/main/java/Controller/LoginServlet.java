@@ -28,11 +28,29 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         UserDAO userDAO = new UserDAO();
         User user = userDAO.getUser(username, password);
-   
+
         if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            response.sendRedirect(request.getContextPath() + "/Home");
+            switch (user.getRole_id()) {
+                case 1: {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", user);
+                    response.sendRedirect(request.getContextPath() + "/Home");
+                    break;
+                }
+                case 2: {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", user);
+                    response.sendRedirect(request.getContextPath() + "/list-products");
+                    break;
+                }
+                default: {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", user);
+                    response.sendRedirect(request.getContextPath() + "/Dashboard");
+                    break;
+                }
+            }
+
         } else {
             request.setAttribute("errorMessage", "Incorrect username or password!");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/views/User/login.jsp");
